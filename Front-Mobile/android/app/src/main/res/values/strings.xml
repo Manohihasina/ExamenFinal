@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Garage S5</string>
+    <string name="title_activity_main">Garage S5</string>
+    <string name="package_name">com.garage.s5</string>
+    <string name="custom_url_scheme">com.garage.s5</string>
+</resources>

@@ -1,0 +1,15 @@
+# Global
+node_modules/
+dist/
+build/
+*.zip
+.env
+
+# Laravel
+/vendor
+/storage/*.key
+
+# Ionic / Angular
+.angular/
+.ionic/
+.gradle/

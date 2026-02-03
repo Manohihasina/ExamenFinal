@@ -1,0 +1,1 @@
+{"message":"Erreur de validation","errors":{"name":["The name field is required."],"price":["The price field is required."],"duration_seconds":["The duration seconds field is required."]}}

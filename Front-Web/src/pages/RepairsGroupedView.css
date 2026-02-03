@@ -1,0 +1,230 @@
+.repairs-grouped {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.search-input {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  min-width: 300px;
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.cars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.car-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.car-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.car-info h3 {
+  margin: 0 0 8px 0;
+  color: #1f2937;
+  font-size: 1.2rem;
+}
+
+.license-plate {
+  margin: 0 0 8px 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.client-info {
+  background: #f0f9ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.client-info p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+}
+
+.client-name {
+  color: #1e40af !important;
+  font-weight: 600;
+}
+
+.client-email {
+  color: #6b7280 !important;
+}
+
+.client-id {
+  color: #9ca3af !important;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.car-repairs-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.repairs-count {
+  background: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+}
+
+.expand-icon {
+  font-size: 1.2em;
+  color: #6c757d;
+}
+
+.repairs-list {
+  padding: 20px;
+  background: white;
+}
+
+.repair-item {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.repair-item:last-child {
+  margin-bottom: 0;
+}
+
+.repair-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.repair-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+.repair-status {
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.repair-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.repair-details > div {
+  font-size: 0.9em;
+}
+
+.repair-notifications {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.notification {
+  font-size: 0.8em;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.notification.sent {
+  background: #d4edda;
+  color: #155724;
+}
+
+.notification.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.no-repairs {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1em;
+}
+
+.error {
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+}

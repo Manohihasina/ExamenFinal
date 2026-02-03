@@ -1,0 +1,7 @@
+{
+    "name": "Test Sync Intervention",
+    "price": 250.50,
+    "duration_seconds": 1800,
+    "description": "Test de synchronisation Firebase",
+    "is_active": true
+}
