@@ -1,12 +1,15 @@
-import { db, storage } from '@/firebase/config-simple'
+import { database, storage } from '@/firebase/config'
 import { 
-  doc,
-  updateDoc,
-  Timestamp,
-  deleteDoc
-} from 'firebase/firestore'
+  ref as dbRef,
+  set,
+  get,
+  update,
+  remove,
+  onValue,
+  push
+} from 'firebase/database'
 import { 
-  ref,
+  ref as storageRef,
   uploadBytes,
   getDownloadURL,
   deleteObject
@@ -42,40 +45,37 @@ export interface Repair {
 }
 
 export class RepairService {
-  // Plus de collection Firestore - utilisation uniquement de Realtime Database
+  private repairsCollection = collection(db, 'repairs')
 
   // Créer une nouvelle demande de réparation
   async createRepair(repairData: Omit<Repair, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
-      console.log('🔍 [REPAIR SERVICE] createRepair appelé avec:', repairData);
-      
-      // Générer un ID unique
-      const repairId = Date.now().toString() + Math.random().toString(36).substr(2, 9)
-      console.log('🔍 [REPAIR SERVICE] ID généré:', repairId);
-      
-      // Créer directement dans Realtime Database
-      const realtimeData = {
-        id: repairId,
-        userId: repairData.userId,
-        carId: repairData.carId,
-        interventionId: repairData.interventionId || 0,
-        interventionName: repairData.interventionName || '',
-        interventionDuration: repairData.interventionDuration || 0,
-        interventionPrice: repairData.interventionPrice ? parseFloat(repairData.interventionPrice) : 0,
-        description: repairData.description || '',
-        photos: repairData.photos || []
+      const repair: Omit<Repair, 'id'> = {
+        ...repairData,
+        status: RepairStatus.PENDING,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
       }
       
-      console.log('🔍 [REPAIR SERVICE] Données pour Realtime:', realtimeData);
+      const docRef = await addDoc(this.repairsCollection, repair)
+      const repairId = docRef.id
       
-      await RealtimeService.createRepair(realtimeData)
+      // Créer aussi dans Realtime Database pour le suivi en temps réel
+      if (repairData.interventionId && repairData.interventionDuration) {
+        await RealtimeService.createRepair({
+          id: repairId,
+          userId: repairData.userId,
+          carId: repairData.carId,
+          interventionId: repairData.interventionId,
+          interventionName: repairData.interventionName || '',
+          interventionDuration: repairData.interventionDuration,
+          interventionPrice: repairData.interventionPrice ? parseFloat(repairData.interventionPrice) : 0
+        })
+      }
       
-      console.log('✅ [REPAIR SERVICE] Réparation créée avec succès:', repairId);
       return repairId
     } catch (error) {
-      console.error('❌ [REPAIR SERVICE] Erreur création réparation:', error);
-      console.error('❌ [REPAIR SERVICE] Stack trace:', (error as Error).stack);
-      throw new Error('Erreur lors de la création de la demande de réparation: ' + (error as Error).message)
+      throw new Error('Erreur lors de la création de la demande de réparation: ' + error)
     }
   }
 
@@ -99,12 +99,53 @@ export class RepairService {
     }
   }
 
-  // Récupérer toutes les réparations d'un utilisateur
+  // Obtenir toutes les réparations d'un utilisateur
   async getUserRepairs(userId: string): Promise<Repair[]> {
     try {
-      // Utiliser Realtime Database et convertir vers Repair
-      const realtimeRepairs = await RealtimeService.getUserRepairs(userId)
-      return realtimeRepairs.map(repair => RealtimeService.convertToRepair(repair))
+      // Essayer d'abord avec la requête optimisée (nécessite un index)
+      try {
+        const q = query(
+          this.repairsCollection,
+          where('userId', '==', userId),
+          orderBy('createdAt', 'desc')
+        )
+        
+        const querySnapshot = await getDocs(q)
+        const repairs: Repair[] = []
+        
+        querySnapshot.forEach((doc) => {
+          repairs.push({ id: doc.id, ...doc.data() } as Repair)
+        })
+        
+        return repairs
+      } catch (indexError: any) {
+        // Si l'index n'existe pas, utiliser une approche alternative
+        if (indexError.message.includes('failed-precondition') || indexError.message.includes('index')) {
+          console.warn('⚠️ Index Firestore manquant, utilisation de la méthode alternative')
+          
+          // Récupérer sans ordre puis trier côté client
+          const q = query(
+            this.repairsCollection,
+            where('userId', '==', userId)
+          )
+          
+          const querySnapshot = await getDocs(q)
+          const repairs: Repair[] = []
+          
+          querySnapshot.forEach((doc) => {
+            repairs.push({ id: doc.id, ...doc.data() } as Repair)
+          })
+          
+          // Trier côté client par createdAt (plus récent en premier)
+          return repairs.sort((a, b) => {
+            const timeA = a.createdAt.toMillis()
+            const timeB = b.createdAt.toMillis()
+            return timeB - timeA
+          })
+        }
+        
+        throw indexError
+      }
     } catch (error) {
       throw new Error('Erreur lors de la récupération des réparations: ' + error)
     }
@@ -113,8 +154,14 @@ export class RepairService {
   // Obtenir une réparation par son ID
   async getRepairById(repairId: string): Promise<Repair | null> {
     try {
-      const realtimeRepair = await RealtimeService.getRepairById(repairId)
-      return realtimeRepair ? RealtimeService.convertToRepair(realtimeRepair) : null
+      const repairDoc = doc(db, 'repairs', repairId)
+      const repairSnapshot = await getDoc(repairDoc)
+      
+      if (repairSnapshot.exists()) {
+        return { id: repairSnapshot.id, ...repairSnapshot.data() } as Repair
+      }
+      
+      return null
     } catch (error) {
       throw new Error('Erreur lors de la récupération de la réparation: ' + error)
     }
@@ -123,14 +170,15 @@ export class RepairService {
   // Mettre à jour le statut d'une réparation
   async updateRepairStatus(repairId: string, status: RepairStatus, additionalData?: Partial<Repair>): Promise<void> {
     try {
+      const repairDoc = doc(db, 'repairs', repairId)
       const updateData: any = {
         status,
-        updatedAt: new Date().toISOString()
+        updatedAt: Timestamp.now()
       }
       
       // Ajouter la date de complétion si le statut est terminé
       if (status === RepairStatus.COMPLETED) {
-        updateData.completedAt = new Date().toISOString()
+        updateData.completedAt = Timestamp.now()
       }
       
       // Ajouter les données additionnelles si fournies
@@ -138,7 +186,7 @@ export class RepairService {
         Object.assign(updateData, additionalData)
       }
       
-      await RealtimeService.updateRepairStatus(repairId, updateData)
+      await updateDoc(repairDoc, updateData)
     } catch (error) {
       throw new Error('Erreur lors de la mise à jour du statut: ' + error)
     }
@@ -147,11 +195,16 @@ export class RepairService {
   // Mettre à jour le prix d'une intervention
   async updateRepairPrice(repairId: string, price: number): Promise<void> {
     try {
-      // Mettre à jour uniquement dans Realtime Database
-      await RealtimeService.updateRepairStatus(repairId, {
-        interventionPrice: price,
-        updatedAt: new Date().toISOString()
+      const repairDoc = doc(db, 'repairs', repairId)
+      
+      // Mettre à jour dans Firestore
+      await updateDoc(repairDoc, {
+        interventionPrice: price.toString(),
+        updatedAt: Timestamp.now()
       })
+      
+      // Mettre à jour dans Realtime Database
+      await RealtimeService.updateRepairPrice(repairId, price)
     } catch (error) {
       throw new Error('Erreur lors de la mise à jour du prix: ' + error)
     }
@@ -254,13 +307,55 @@ export class RepairService {
     return await RealtimeService.requestNotificationPermission()
   }
 
-  // Récupérer les réparations par statut
+  // Obtenir les réparations par statut
   async getRepairsByStatus(userId: string, status: RepairStatus): Promise<Repair[]> {
     try {
-      // Utiliser Realtime Database et convertir vers Repair
-      const realtimeRepairs = await RealtimeService.getUserRepairs(userId)
-      const filteredRepairs = realtimeRepairs.filter(repair => repair.status === status)
-      return filteredRepairs.map(repair => RealtimeService.convertToRepair(repair))
+      // Essayer d'abord avec la requête optimisée (nécessite un index composite)
+      try {
+        const q = query(
+          this.repairsCollection,
+          where('userId', '==', userId),
+          where('status', '==', status),
+          orderBy('createdAt', 'desc')
+        )
+        
+        const querySnapshot = await getDocs(q)
+        const repairs: Repair[] = []
+        
+        querySnapshot.forEach((doc) => {
+          repairs.push({ id: doc.id, ...doc.data() } as Repair)
+        })
+        
+        return repairs
+      } catch (indexError: any) {
+        // Si l'index n'existe pas, utiliser une approche alternative
+        if (indexError.message.includes('failed-precondition') || indexError.message.includes('index')) {
+          console.warn('⚠️ Index Firestore manquant, utilisation de la méthode alternative pour getRepairsByStatus')
+          
+          // Récupérer sans ordre puis trier côté client
+          const q = query(
+            this.repairsCollection,
+            where('userId', '==', userId),
+            where('status', '==', status)
+          )
+          
+          const querySnapshot = await getDocs(q)
+          const repairs: Repair[] = []
+          
+          querySnapshot.forEach((doc) => {
+            repairs.push({ id: doc.id, ...doc.data() } as Repair)
+          })
+          
+          // Trier côté client par createdAt (plus récent en premier)
+          return repairs.sort((a, b) => {
+            const timeA = a.createdAt.toMillis()
+            const timeB = b.createdAt.toMillis()
+            return timeB - timeA
+          })
+        }
+        
+        throw indexError
+      }
     } catch (error) {
       throw new Error('Erreur lors de la récupération des réparations par statut: ' + error)
     }

@@ -1,45 +1,45 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null",
-    
+    ".read": true,
+    ".write": true,
+
     "cars": {
       "$carId": {
-        ".read": "auth != null",
-        ".write": "auth != null"
+        ".read": true,
+        ".write": true
       }
     },
-    
+
     "interventions": {
-      ".indexOn": ["id", "is_active"],
+      ".indexOn": ["repairId", "status", "active"],
       "$interventionId": {
-        ".read": "auth != null",
-        ".write": "auth != null"
+        ".read": true,
+        ".write": true
       }
     },
-    
+
     "repairs": {
       "$repairId": {
-        ".read": "auth != null",
-        ".write": "auth != null",
+        ".read": true,
+        ".write": true,
         ".validate": {
           "status": "newData.isString() && newData.val().length > 0",
           "interventionDuration": "newData.isNumber() && newData.val() > 0"
         }
       }
     },
-    
+
     "repair_slots": {
       "$slotId": {
-        ".read": "auth != null",
-        ".write": "auth != null"
+        ".read": true,
+        ".write": true
       }
     },
-    
+
     "users": {
       "$userId": {
-        ".read": "auth != null && ($userId === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
-        ".write": "auth != null && ($userId === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+        ".read": true,
+        ".write": true
       }
     }
   }

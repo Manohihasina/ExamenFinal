@@ -19,6 +19,8 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
+import { ref, set, get } from 'firebase/database';
+import { database } from '../firebase/config';
 
 interface InterventionFormData {
   name: string;
@@ -49,7 +51,7 @@ const AddIntervention: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       toast({
         title: 'Erreur',
@@ -64,41 +66,54 @@ const AddIntervention: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/interventions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      // Créer l'intervention directement dans Firebase
+      const interventionsRef = ref(database, 'interventions');
+      const snapshot = await get(interventionsRef);
+      
+      let newId: string;
+      if (snapshot.exists()) {
+        const interventions = snapshot.val();
+        const maxId = Math.max(...Object.keys(interventions).map(key => parseInt(key)));
+        newId = (maxId + 1).toString();
+      } else {
+        newId = '1';
+      }
+
+      const interventionData = {
+        name: formData.name,
+        price: formData.price,
+        duration: formData.duration_seconds,
+        description: formData.description,
+        is_active: formData.is_active,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        created_by: 'admin' // Admin par défaut
+      };
+
+      await set(ref(database, `interventions/${newId}`), interventionData);
+
+      toast({
+        title: 'Succès',
+        description: 'Intervention créée avec succès dans Firebase',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
       });
 
-      const data = await response.json();
+      // Réinitialiser le formulaire
+      setFormData({
+        name: '',
+        price: 0,
+        duration_seconds: 0,
+        description: '',
+        is_active: true,
+      });
 
-      if (response.ok) {
-        toast({
-          title: 'Succès',
-          description: 'Intervention créée avec succès et synchronisée avec Firebase',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-
-        // Réinitialiser le formulaire
-        setFormData({
-          name: '',
-          price: 0,
-          duration_seconds: 3600,
-          description: '',
-          is_active: true,
-        });
-      } else {
-        throw new Error(data.message || 'Erreur lors de la création');
-      }
-    } catch (error: any) {
+    } catch (error) {
+      console.error('Erreur création intervention:', error);
       toast({
         title: 'Erreur',
-        description: error.message || 'Une erreur est survenue',
+        description: 'Impossible de créer l\'intervention',
         status: 'error',
         duration: 3000,
         isClosable: true,
