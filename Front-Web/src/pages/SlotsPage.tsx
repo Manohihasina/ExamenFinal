@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -28,8 +27,11 @@ import {
   Th,
   Td,
   Progress,
+  Divider,
+  useToast,
+  FormControl,
+  FormLabel
 } from '@chakra-ui/react';
-import { useToast } from '@chakra-ui/react';
 import { repairSlotService, type RepairSlot, type CarWithRepairs } from '../services/repairSlotService';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase/config';
@@ -54,8 +56,54 @@ const SlotsPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [repairProgress, setRepairProgress] = useState<Record<string, { progress: number; remaining: number }>>({});
   const [slotRepairs, setSlotRepairs] = useState<Record<number, any[]>>({});
+  const [completedCars, setCompletedCars] = useState<Record<string, { carId: string; interventions: any[]; totalPrice: number }>>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+
+  // Fonction pour vérifier toutes les voitures dans les slots
+  const checkAllCarsInSlots = async () => {
+    console.log('🔍 [DEBUG] Vérification manuelle de toutes les voitures dans les slots');
+    
+    for (const slot of slots) {
+      if (slot.car_id) {
+        const carId = slot.car_id.toString();
+        console.log('🔍 [DEBUG] Vérification slot:', slot.id, 'carId:', carId);
+        
+        try {
+          const allRepairs = await repairSlotService.getCarRepairs(carId);
+          console.log('🔍 [DEBUG] Réparations trouvées pour voiture', carId, ':', allRepairs);
+          
+          const allCompleted = allRepairs.every(repair => repair.status === 'completed');
+          console.log('🔍 [DEBUG] Voiture', carId, 'toutes complétées?', allCompleted);
+          
+          if (allCompleted && allRepairs.length > 0) {
+            const totalPrice = allRepairs.reduce((sum: number, repair: any) => sum + repair.interventionPrice, 0);
+            
+            setCompletedCars(prev => ({
+              ...prev,
+              [carId]: {
+                carId,
+                interventions: allRepairs,
+                totalPrice
+              }
+            }));
+            
+            console.log('✅ [DEBUG] Voiture', carId, 'ajoutée aux complétées!');
+          }
+        } catch (error) {
+          console.error('❌ [DEBUG] Erreur vérification voiture', carId, ':', error);
+        }
+      }
+    }
+    
+    toast({
+      title: 'Vérification terminée',
+      description: 'Vérification de toutes les voitures dans les slots complétée',
+      status: 'info',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   // Charger les réparations pour un slot spécifique
   const loadSlotRepairs = useCallback(async (slot: RepairSlot) => {
@@ -295,10 +343,187 @@ const SlotsPage: React.FC = () => {
           isClosable: true,
         });
         
+        // Vérifier si toutes les interventions de cette voiture sont terminées
+        checkAllRepairsCompleted(repairId);
+        
         // Recharger les données en temps réel
         fetchData();
       }
     }, 1000); // Vérifier chaque seconde
+  };
+
+  const checkAllRepairsCompleted = async (completedRepairId: string) => {
+    try {
+      console.log('🔍 [DEBUG] Vérification réparations complétées pour:', completedRepairId);
+      
+      // Trouver la réparation terminée
+      let completedRepair: any = null;
+      let carId: string = '';
+      
+      Object.keys(slotRepairs).forEach(slotId => {
+        const repairs = slotRepairs[parseInt(slotId)];
+        const repair = repairs.find(r => r.id === completedRepairId);
+        if (repair) {
+          completedRepair = repair;
+          carId = repair.carId?.toString() || '';
+          console.log('🔍 [DEBUG] Réparation trouvée:', repair, 'carId:', carId);
+        }
+      });
+      
+      if (!completedRepair || !carId) {
+        console.log('❌ [DEBUG] Pas de réparation trouvée ou carId vide');
+        return;
+      }
+      
+      // Récupérer toutes les réparations de cette voiture
+      const allRepairs = await repairSlotService.getCarRepairs(carId);
+      console.log('🔍 [DEBUG] Toutes les réparations de la voiture:', allRepairs);
+      
+      const allCompleted = allRepairs.every(repair => repair.status === 'completed');
+      console.log('🔍 [DEBUG] Toutes complétées?', allCompleted);
+      
+      if (allCompleted) {
+        // Calculer le prix total
+        const totalPrice = allRepairs.reduce((sum: number, repair: any) => sum + repair.interventionPrice, 0);
+        console.log('🔍 [DEBUG] Prix total calculé:', totalPrice);
+        
+        // Ajouter aux voitures complétées
+        setCompletedCars(prev => {
+          console.log('🔍 [DEBUG] Ajout voiture complétée:', carId);
+          return {
+            ...prev,
+            [carId]: {
+              carId,
+              interventions: allRepairs,
+              totalPrice
+            }
+          };
+        });
+        
+        toast({
+          title: 'Toutes les réparations terminées',
+          description: `La voiture ${carId} a terminé toutes ses interventions. Total: ${totalPrice}€`,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        console.log('🔍 [DEBUG] Pas encore toutes les réparations terminées');
+      }
+    } catch (error) {
+      console.error('Erreur vérification réparations complétées:', error);
+    }
+  };
+
+  const moveToWaitingSlots = async (carId: string) => {
+    try {
+      const completedCar = completedCars[carId];
+      if (!completedCar) return;
+      
+      // Récupérer les informations du client depuis les réparations de la voiture
+      console.log('🔍 [DEBUG] Récupération du client ID depuis les réparations...');
+      
+      // Utiliser la même fonction que getCarRepairs pour récupérer les réparations
+      const carRepairs = await repairSlotService.getCarRepairs(carId);
+      console.log('🔍 [DEBUG] Réparations trouvées pour clientId:', carRepairs);
+      
+      // Récupérer le userId depuis la première réparation
+      const clientId = carRepairs.length > 0 ? carRepairs[0].userId : 'current_user';
+      
+      console.log('🔍 [DEBUG] Client ID récupéré depuis réparations:', clientId);
+      console.log('🔍 [DEBUG] Nombre de réparations trouvées:', carRepairs.length);
+      
+      // Créer l'objet pour waiting_slots
+      const waitingSlotData = {
+        carId,
+        clientId,
+        interventions: completedCar.interventions.map(intervention => ({
+          id: intervention.id,
+          name: intervention.interventionName,
+          price: intervention.interventionPrice
+        })),
+        totalPrice: completedCar.totalPrice,
+        createdAt: new Date().toISOString(),
+        status: 'waiting_payment'
+      };
+      
+      // Ajouter à la base de données waiting_slots
+      await repairSlotService.addToWaitingSlots(waitingSlotData);
+      
+      // Retirer de la liste des complétées
+      setCompletedCars(prev => {
+        const updated = { ...prev };
+        delete updated[carId];
+        return updated;
+      });
+      
+      // Libérer le slot
+      console.log('🔍 [DEBUG] Recherche du slot pour la voiture:', carId);
+      console.log('🔍 [DEBUG] Slots disponibles:', slots.map(s => ({ 
+        id: s.id, 
+        car_id: s.car_id, 
+        car_id_str: s.car_id?.toString(),
+        status: s.status,
+        car_client_id: s.car?.client?.id,
+        car_client_name: s.car?.client?.name
+      })));
+      
+      // Essayer différentes méthodes pour trouver le slot
+      let slotToFree = slots.find(slot => slot.car_id?.toString() === carId);
+      
+      if (!slotToFree) {
+        console.log('🔍 [DEBUG] Première recherche échouée, essai avec carId comme nombre...');
+        slotToFree = slots.find(slot => slot.car_id === parseInt(carId));
+      }
+      
+      if (!slotToFree) {
+        console.log('🔍 [DEBUG] Deuxième recherche échouée, essai avec client ID...');
+        slotToFree = slots.find(slot => slot.car?.client?.id === completedCar.interventions[0]?.userId);
+      }
+      
+      console.log('🔍 [DEBUG] Slot trouvé:', slotToFree);
+      
+      if (slotToFree) {
+        console.log('🔍 [DEBUG] Libération du slot:', slotToFree.id);
+        console.log('🔍 [DEBUG] Statut actuel du slot:', slotToFree.status);
+        
+        await repairSlotService.updateSlotStatus(slotToFree.id, 'available');
+        console.log('✅ [DEBUG] Slot libéré avec succès');
+        
+        // Vérifier que le slot a bien été mis à jour
+        setTimeout(async () => {
+          console.log('🔍 [DEBUG] Vérification du statut du slot après mise à jour...');
+          // La fonction fetchData devrait recharger et montrer le slot comme disponible
+        }, 1000);
+      } else {
+        console.log('❌ [DEBUG] Aucun slot trouvé pour cette voiture');
+        console.log('❌ [DEBUG] CarId recherché:', carId);
+        console.log('❌ [DEBUG] Type de carId:', typeof carId);
+      }
+      
+      console.log('🔍 [DEBUG] Affichage du toast de succès');
+      toast({
+        title: 'Voiture déplacée',
+        description: 'La voiture a été déplacée vers les slots d\'attente de paiement',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      
+      console.log('🔍 [DEBUG] Rechargement des données');
+      // Recharger les données
+      fetchData();
+      console.log('✅ [DEBUG] Fonction moveToWaitingSlots terminée');
+    } catch (error) {
+      console.error('Erreur déplacement vers waiting slots:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de déplacer la voiture vers les slots d\'attente',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -343,6 +568,20 @@ const SlotsPage: React.FC = () => {
         <Heading size="lg" mb={6} color="gray.800">
           Slots de Réparation
         </Heading>
+        
+        {/* Bouton de test pour vérifier les voitures complétées */}
+        <HStack mb={6}>
+          <Button 
+            colorScheme="blue" 
+            onClick={checkAllCarsInSlots}
+            leftIcon={<span>🔍</span>}
+          >
+            Vérifier les voitures complétées
+          </Button>
+          <Text fontSize="sm" color="gray.600" ml={3}>
+            Test: Cliquez pour vérifier manuellement si des voitures ont toutes leurs réparations terminées
+          </Text>
+        </HStack>
 
         <VStack spacing={6} align="stretch">
           {slots.map((slot) => (
@@ -487,6 +726,53 @@ const SlotsPage: React.FC = () => {
             </Box>
           ))}
         </VStack>
+
+        {/* Section des voitures complétées */}
+        {Object.keys(completedCars).length > 0 && (
+          <Box mt={8} p={6} bg="green.50" borderRadius="lg" borderWidth="1px" borderColor="green.200">
+            <Heading size="md" color="green.700" mb={4}>
+              🎉 Voitures prêtes pour le paiement
+            </Heading>
+            
+            {Object.entries(completedCars).map(([carId, carData]) => (
+              <Box key={carId} p={4} bg="white" borderRadius="md" mb={4} shadow="sm">
+                <VStack align="start" spacing={3}>
+                  <HStack justify="space-between" w="100%">
+                    <Text fontWeight="bold" fontSize="lg">Voiture: {carId}</Text>
+                    <Badge colorScheme="green">{carData.interventions.length} interventions</Badge>
+                  </HStack>
+                  
+                  <VStack align="start" spacing={2} w="100%">
+                    <Text fontWeight="semibold">Interventions terminées:</Text>
+                    {carData.interventions.map((intervention: any) => (
+                      <HStack key={intervention.id} justify="space-between" w="100%" px={2}>
+                        <Text fontSize="sm">• {intervention.interventionName}</Text>
+                        <Text fontWeight="bold" color="green.600">{intervention.interventionPrice}€</Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                  
+                  <Divider />
+                  
+                  <HStack justify="space-between" w="100%">
+                    <Text fontSize="lg" fontWeight="bold">Total à payer:</Text>
+                    <Text fontSize="xl" fontWeight="bold" color="green.600">{carData.totalPrice}€</Text>
+                  </HStack>
+                  
+                  <Button
+                    colorScheme="green"
+                    size="lg"
+                    w="100%"
+                    onClick={() => moveToWaitingSlots(carId)}
+                    leftIcon={<span>🚗</span>}
+                  >
+                    Mettre en attente de paiement
+                  </Button>
+                </VStack>
+              </Box>
+            ))}
+          </Box>
+        )}
 
         {/* Modal pour ajouter une voiture */}
         <Modal isOpen={isOpen} onClose={onClose}>

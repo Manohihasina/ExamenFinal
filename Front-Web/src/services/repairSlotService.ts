@@ -1,4 +1,4 @@
-import { ref, get, onValue, update } from 'firebase/database'
+import { ref, get, onValue, update, push, set } from 'firebase/database'
 import { database } from '../firebase/config'
 import { getAuth } from 'firebase/auth'
 
@@ -285,6 +285,57 @@ export class RepairSlotService {
       console.log('✅ Statut réparation mis à jour:', repairId, updates);
     } catch (error) {
       console.error('❌ Erreur mise à jour statut:', error);
+      throw error;
+    }
+  }
+
+  async addToWaitingSlots(data: {
+    carId: string;
+    clientId: string;
+    interventions: Array<{ id: string; name: string; price: number }>;
+    totalPrice: number;
+    createdAt: string;
+    status: string;
+  }) {
+    try {
+      const waitingSlotsRef = ref(database, 'waiting_slots');
+      const newWaitingSlotRef = push(waitingSlotsRef);
+      
+      await set(newWaitingSlotRef, {
+        id: newWaitingSlotRef.key,
+        ...data,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log('✅ Voiture ajoutée aux waiting_slots:', data.carId);
+    } catch (error) {
+      console.error('❌ Erreur ajout waiting slots:', error);
+      throw error;
+    }
+  }
+
+  async updateSlotStatus(slotId: number, status: string) {
+    try {
+      console.log('🔍 [DEBUG] Mise à jour du slot:', slotId, 'nouveau statut:', status);
+      const slotRef = ref(database, `repair_slots/${slotId}`); // Corrigé: repair_slots au lieu de slots
+      
+      const updateData: any = {
+        status,
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (status === 'available') {
+        updateData.car_id = null; // Libérer la voiture
+        console.log('🔍 [DEBUG] Libération de la voiture du slot');
+      }
+      
+      console.log('🔍 [DEBUG] Données de mise à jour:', updateData);
+      await update(slotRef, updateData);
+      
+      console.log('✅ Statut slot mis à jour:', slotId, status);
+    } catch (error) {
+      console.error('❌ Erreur mise à jour slot:', error);
       throw error;
     }
   }
