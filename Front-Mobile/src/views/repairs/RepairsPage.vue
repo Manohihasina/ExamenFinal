@@ -35,10 +35,7 @@
 
       <!-- Loading state -->
       <div v-if="loading" class="loading-container">
-        <div class="loading-card">
-          <ion-spinner name="crescent"></ion-spinner>
-          <p>Chargement des réparations...</p>
-        </div>
+        <CarLoadingSpinner message="Chargement des réparations..." />
       </div>
 
       <!-- Empty state -->
@@ -193,7 +190,7 @@
                   Annuler
                 </ion-button>
                 <ion-button fill="solid" type="submit" :disabled="submitting">
-                  <ion-spinner v-if="submitting" name="crescent" size="small"></ion-spinner>
+                  <ion-icon v-if="submitting" :icon="carOutline" class="saving-car"></ion-icon>
                   <span v-else>Envoyer la demande</span>
                 </ion-button>
               </div>
@@ -216,7 +213,6 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  IonSpinner,
   IonModal,
   IonSelect,
   IonSelectOption,
@@ -227,10 +223,11 @@ import {
   toastController
 } from '@ionic/vue'
 import { 
-  addOutline, 
-  closeOutline, 
+  addOutline,
+  closeOutline,
   chevronForwardOutline, 
   buildOutline,
+  carOutline,
   cashOutline,
   refreshOutline,
   playOutline
@@ -240,6 +237,7 @@ import { carService, type Car } from '@/services/car.service'
 import { RealtimeService, type RealtimeRepair } from '@/services/realtime.service'
 import { interventionService, type Intervention } from '@/services/intervention.service'
 import { repairService, RepairStatus } from '@/services/repair.service'
+import CarLoadingSpinner from '@/components/CarLoadingSpinner.vue'
 
 
 const loading = ref(true)
@@ -905,6 +903,27 @@ const getStatusText = (status: string): string => {
 @media (min-width: 768px) {
   .repairs-grid {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+/* Animation pour la voiture dans le bouton de soumission */
+.saving-car {
+  animation: driveCar 1s ease-in-out infinite;
+  color: var(--ion-color-primary-contrast);
+}
+
+@keyframes driveCar {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  25% {
+    transform: translateX(2px) scale(1.05);
+  }
+  50% {
+    transform: translateX(-1px) scale(0.95);
+  }
+  75% {
+    transform: translateX(1px) scale(1.02);
   }
 }
 </style>

@@ -4,6 +4,10 @@
       <ion-toolbar>
         <ion-title class="modern-title">Accueil</ion-title>
         <ion-buttons slot="end">
+          <ion-button fill="clear" @click="router.push('/tabs/notifications')" class="notification-button">
+            <ion-icon :icon="notificationsOutline"></ion-icon>
+            <ion-badge color="danger" v-if="unreadCount > 0">{{ unreadCount }}</ion-badge>
+          </ion-button>
           <ion-button fill="clear" @click="refreshData">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
@@ -155,6 +159,7 @@ import {
   IonButton,
   IonButtons,
   IonIcon,
+  IonBadge,
   toastController
 } from '@ionic/vue'
 import { 
@@ -164,7 +169,8 @@ import {
   personCircleOutline,
   chevronForwardOutline,
   refreshOutline,
-  addOutline
+  addOutline,
+  notificationsOutline
 } from 'ionicons/icons'
 import { authService } from '@/services/auth.service'
 import { carService, type Car } from '@/services/car.service'
@@ -175,6 +181,7 @@ const router = useRouter()
 const user = ref<any>(null)
 const cars = ref<Car[]>([])
 const repairs = ref<Repair[]>([])
+const unreadCount = ref(2) // Simuler 2 notifications non lues
 
 // Charger l'utilisateur depuis le localStorage au démarrage
 const loadUserFromStorage = () => {
@@ -280,6 +287,26 @@ const showToast = async (message: string, color: string = 'primary') => {
   font-weight: 600;
   font-size: 1.3rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Notification Button */
+.notification-button {
+  position: relative;
+  color: white;
+}
+
+.notification-button ion-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.7rem;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Content Modern */

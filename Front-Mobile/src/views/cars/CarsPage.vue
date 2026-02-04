@@ -14,10 +14,7 @@
     <ion-content :fullscreen="true" class="modern-content">
       <!-- Loading state -->
       <div v-if="loading" class="loading-container">
-        <div class="loading-card">
-          <ion-spinner name="crescent"></ion-spinner>
-          <p>Chargement de vos voitures...</p>
-        </div>
+        <CarLoadingSpinner message="Chargement de vos voitures..." />
       </div>
 
       <!-- Empty state -->
@@ -139,7 +136,7 @@
                   Annuler
                 </ion-button>
                 <ion-button fill="solid" type="submit" :disabled="saving">
-                  <ion-spinner v-if="saving" name="crescent" size="small"></ion-spinner>
+                  <ion-icon v-if="saving" :icon="carOutline" class="saving-car"></ion-icon>
                   <span v-else>{{ editingCar ? 'Modifier' : 'Ajouter' }}</span>
                 </ion-button>
               </div>
@@ -164,7 +161,6 @@ import {
   IonIcon,
   IonLabel,
   IonInput,
-  IonSpinner,
   IonModal,
   toastController,
   alertController
@@ -178,7 +174,7 @@ import {
 } from 'ionicons/icons'
 import { authService } from '@/services/auth.service'
 import { carService, type Car } from '@/services/car.service'
-import { RealtimeService } from '@/services/realtime.service'
+import CarLoadingSpinner from '@/components/CarLoadingSpinner.vue'
 
 const loading = ref(true)
 const saving = ref(false)
@@ -751,6 +747,27 @@ const showToast = async (message: string, color: string = 'primary') => {
 @media (min-width: 768px) {
   .cars-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+/* Animation pour la voiture dans le bouton de sauvegarde */
+.saving-car {
+  animation: driveCar 1s ease-in-out infinite;
+  color: var(--ion-color-primary-contrast);
+}
+
+@keyframes driveCar {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  25% {
+    transform: translateX(2px) scale(1.05);
+  }
+  50% {
+    transform: translateX(-1px) scale(0.95);
+  }
+  75% {
+    transform: translateX(1px) scale(1.02);
   }
 }
 </style>

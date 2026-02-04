@@ -2,23 +2,6 @@
   <ion-app>
     <ion-router-outlet />
     
-    <!-- Interface de test pour les notifications -->
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button @click="toggleTestMenu">
-        <ion-icon :icon="notificationsOutline"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-list side="top">
-        <ion-fab-button @click="testFCMFlow" color="primary">
-          <ion-icon :icon="playOutline"></ion-icon>
-        </ion-fab-button>
-        <ion-fab-button @click="testIntervention" color="secondary">
-          <ion-icon :icon="buildOutline"></ion-icon>
-        </ion-fab-button>
-        <ion-fab-button @click="testRepair" color="tertiary">
-          <ion-icon :icon="checkmarkOutline"></ion-icon>
-        </ion-fab-button>
-      </ion-fab-list>
-    </ion-fab>
   </ion-app>
 </template>
 

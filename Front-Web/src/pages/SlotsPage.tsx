@@ -27,9 +27,23 @@ import {
   Tr,
   Th,
   Td,
+  Progress,
 } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 import { repairSlotService, type RepairSlot, type CarWithRepairs } from '../services/repairSlotService';
+import { ref, onValue } from 'firebase/database';
+import { database } from '../firebase/config';
+import { useCallback } from 'react';
+
+// Définir le type Repair localement
+interface Repair {
+  id: string;
+  interventionName: string;
+  interventionPrice: number;
+  interventionId: number;
+  interventionDuration: number;
+  status: 'pending' | 'in_progress' | 'completed';
+}
 
 const SlotsPage: React.FC = () => {
   const [slots, setSlots] = useState<RepairSlot[]>([]);
@@ -38,12 +52,13 @@ const SlotsPage: React.FC = () => {
   const [selectedCar, setSelectedCar] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [slotRepairs, setSlotRepairs] = useState<{ [key: number]: Repair[] }>({});
+  const [repairProgress, setRepairProgress] = useState<Record<string, { progress: number; remaining: number }>>({});
+  const [slotRepairs, setSlotRepairs] = useState<Record<number, any[]>>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
   // Charger les réparations pour un slot spécifique
-  const loadSlotRepairs = async (slot: RepairSlot) => {
+  const loadSlotRepairs = useCallback(async (slot: RepairSlot) => {
     if (!slot.car_id || slotRepairs[slot.id]) return;
     
     try {
@@ -53,14 +68,9 @@ const SlotsPage: React.FC = () => {
     } catch (error) {
       console.error('❌ Erreur chargement réparations slot:', error);
     }
-  };
+  }, [slotRepairs]);
 
-  // Charger les slots et les voitures avec réparations
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     console.log('🔍 [DEBUG] Début fetchData() dans SlotsPage');
     
     try {
@@ -69,25 +79,19 @@ const SlotsPage: React.FC = () => {
       const slotsData = await repairSlotService.getRepairSlots();
       console.log('🔍 [DEBUG] Slots reçus:', slotsData.length, 'slots');
       setSlots(slotsData);
-      
-      // Charger les réparations pour les slots occupés
+
+      // Charger les voitures avec réparations
+      console.log('🔍 [DEBUG] Appel getCarsWithRepairs()...');
+      const carsData = await repairSlotService.getCarsWithRepairs();
+      console.log('🔍 [DEBUG] Voitures reçues:', carsData.length, 'voitures');
+      setCarsWithRepairs(carsData);
+
+      // Charger les réparations pour chaque slot occupé
       for (const slot of slotsData) {
         if (slot.status === 'occupied' && slot.car_id) {
           await loadSlotRepairs(slot);
         }
       }
-
-      // Charger les voitures avec réparations depuis API Laravel
-      console.log('🔍 [DEBUG] Appel getCarsWithRepairs()...');
-      const carsData = await repairSlotService.getCarsWithRepairs();
-      console.log('🔍 [DEBUG] Cars reçus:', carsData.length, 'voitures');
-      if (carsData.length > 0) {
-        console.log('🔍 [DEBUG] Structure des données voitures:', JSON.stringify(carsData[0], null, 2));
-        console.log('🔍 [DEBUG] Type de ID:', typeof carsData[0].id);
-        console.log('🔍 [DEBUG] Valeur ID:', carsData[0].id);
-      }
-      setCarsWithRepairs(carsData);
-
     } catch (error) {
       console.error('❌ [DEBUG] Erreur globale dans fetchData():', error);
       console.error('🔍 [DEBUG] Type erreur:', typeof error);
@@ -104,7 +108,23 @@ const SlotsPage: React.FC = () => {
       console.log('🔍 [DEBUG] fetchData() terminé, setLoading(false)');
       setLoading(false);
     }
-  };
+  }, [loadSlotRepairs, toast]);
+
+  // Charger les slots et les voitures avec réparations
+  useEffect(() => {
+    fetchData();
+    
+    // Écouter les changements en temps réel des réparations
+    const repairsRef = ref(database, 'repairs');
+    const unsubscribe = onValue(repairsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        console.log('🔄 [REALTIME] Changements détectés dans les réparations');
+        fetchData(); // Recharger les données
+      }
+    });
+
+    return () => unsubscribe();
+  }, [fetchData, toast]);
 
   const handleAddCarToSlot = async () => {
     console.log('🔍 [DEBUG] handleAddCarToSlot appelé avec:', { selectedSlot, selectedCar });
@@ -165,9 +185,23 @@ const SlotsPage: React.FC = () => {
     }
   };
 
-  const handleStartRepair = async (repairId: string) => {
+  const handleStartRepair = async (repairId: string, interventionId: number, duration: number) => {
     try {
-      await repairSlotService.startRepair(repairId);
+      // Mettre à jour immédiatement l'état local pour le statut "en cours"
+      setSlotRepairs(prev => {
+        const updated = { ...prev };
+        Object.keys(updated).forEach(slotId => {
+          updated[parseInt(slotId)] = updated[parseInt(slotId)].map(repair => 
+            repair.id === repairId 
+              ? { ...repair, status: 'in_progress' as const }
+              : repair
+          );
+        });
+        return updated;
+      });
+      
+      // Démarrer la réparation
+      await repairSlotService.startRepair(repairId, interventionId, duration);
       
       toast({
         title: 'Succès',
@@ -176,7 +210,10 @@ const SlotsPage: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-      fetchData(); // Recharger les données
+      
+      // Démarrer le suivi en temps réel
+      startRepairTracking(repairId, duration);
+      
     } catch (error) {
       toast({
         title: 'Erreur',
@@ -186,6 +223,82 @@ const SlotsPage: React.FC = () => {
         isClosable: true,
       });
     }
+  };
+
+  const startRepairTracking = (repairId: string, duration: number) => {
+    const startTime = Date.now();
+    const halfwayTime = startTime + (duration * 1000) / 2; // Temps à mi-parcours
+    const endTime = startTime + (duration * 1000); // Temps de fin
+
+    // Vérifier toutes les secondes
+    const interval = setInterval(() => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const remaining = Math.max(0, endTime - currentTime);
+      const progress = Math.min(100, (elapsed / (duration * 1000)) * 100);
+      
+      // Mettre à jour la barre de progression
+      setRepairProgress(prev => ({
+        ...prev,
+        [repairId]: { progress, remaining: Math.ceil(remaining / 1000) }
+      }));
+      
+      // À mi-parcours
+      if (currentTime >= halfwayTime && currentTime < endTime) {
+        repairSlotService.updateRepairStatus(repairId, {
+          status: 'in_progress',
+          halfwayNotified: true
+        });
+        
+        toast({
+          title: 'Réparation à mi-parcours',
+          description: `Temps restant: ${Math.ceil(remaining / 1000)} secondes`,
+          status: 'info',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      
+      // Réparation terminée
+      if (currentTime >= endTime) {
+        clearInterval(interval);
+        
+        // Mettre à jour la progression finale
+        setRepairProgress(prev => ({
+          ...prev,
+          [repairId]: { progress: 100, remaining: 0 }
+        }));
+        
+        // Mettre à jour immédiatement l'état local pour le statut "terminé"
+        setSlotRepairs(prev => {
+          const updated = { ...prev };
+          Object.keys(updated).forEach(slotId => {
+            updated[parseInt(slotId)] = updated[parseInt(slotId)].map(repair => 
+              repair.id === repairId 
+                ? { ...repair, status: 'completed' as const }
+                : repair
+            );
+          });
+          return updated;
+        });
+        
+        repairSlotService.updateRepairStatus(repairId, {
+          status: 'completed',
+          completedNotified: true
+        });
+        
+        toast({
+          title: 'Réparation terminée',
+          description: 'La réparation a été complétée avec succès',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        
+        // Recharger les données en temps réel
+        fetchData();
+      }
+    }, 1000); // Vérifier chaque seconde
   };
 
   const getStatusColor = (status: string) => {
@@ -319,8 +432,12 @@ const SlotsPage: React.FC = () => {
                           <Td>{repair.interventionName}</Td>
                           <Td>{repair.interventionPrice}€</Td>
                           <Td>
-                            <Badge colorScheme={repair.status === 'pending' ? 'yellow' : 'green'}>
-                              {repair.status === 'pending' ? 'En attente' : 'En cours'}
+                            <Badge colorScheme={
+                              repair.status === 'pending' ? 'yellow' : 
+                              repair.status === 'in_progress' ? 'blue' : 'green'
+                            }>
+                              {repair.status === 'pending' ? 'En attente' : 
+                               repair.status === 'in_progress' ? 'En cours' : 'Terminé'}
                             </Badge>
                           </Td>
                           <Td>
@@ -328,10 +445,37 @@ const SlotsPage: React.FC = () => {
                               <Button
                                 colorScheme="green"
                                 size="xs"
-                                onClick={() => handleStartRepair(repair.id)}
+                                onClick={() => handleStartRepair(
+                                  repair.id, 
+                                  repair.interventionId, 
+                                  repair.interventionDuration || 60
+                                )}
                               >
                                 Réparer
                               </Button>
+                            )}
+                            
+                            {/* Barre de progression pour les réparations en cours */}
+                            {repair.status === 'in_progress' && repairProgress[repair.id] && (
+                              <Box w="200px">
+                                <Text fontSize="xs" mb={1}>
+                                  {repairProgress[repair.id].remaining}s restantes
+                                </Text>
+                                <Progress 
+                                  value={repairProgress[repair.id].progress} 
+                                  size="sm" 
+                                  colorScheme="blue"
+                                  hasStripe
+                                  isAnimated
+                                />
+                              </Box>
+                            )}
+                            
+                            {/* Badge pour les réparations terminées */}
+                            {repair.status === 'completed' && (
+                              <Badge colorScheme="green" variant="solid">
+                                ✅ Terminé
+                              </Badge>
                             )}
                           </Td>
                         </Tr>

@@ -36,6 +36,10 @@ const routes: Array<RouteRecordRaw> = [
         redirect: '/tabs/home'
       },
       {
+        path: 'notifications',
+        component: () => import('@/views/notifications/NotificationsPage.vue')
+      },
+      {
         path: 'home',
         component: () => import('@/views/HomePage.vue')
       },
@@ -58,6 +62,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'repairs/:id',
         component: () => import('@/views/repairs/RepairDetailPage.vue')
+      },
+      {
+        path: 'payment',
+        component: () => import('@/views/payment/PaymentPage.vue')
       },
       {
         path: 'profile',

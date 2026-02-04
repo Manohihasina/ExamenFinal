@@ -1,4 +1,4 @@
-import { ref, get, onValue } from 'firebase/database'
+import { ref, get, onValue, update } from 'firebase/database'
 import { database } from '../firebase/config'
 import { getAuth } from 'firebase/auth'
 
@@ -219,13 +219,13 @@ export class RepairSlotService {
             ...allRepairs[repairId]
           }));
         
-        console.log('✅ Réparations trouvées:', carRepairs.length);
+        console.log('Réparations trouvées:', carRepairs.length);
         return carRepairs;
       }
       
       return [];
     } catch (error) {
-      console.error('❌ Erreur récupération réparations:', error);
+      console.error('Erreur récupération réparations:', error);
       return [];
     }
   }
@@ -250,22 +250,42 @@ export class RepairSlotService {
   }
 
   // Démarrer une réparation
-  async startRepair(repairId: string): Promise<unknown> {
+  async startRepair(repairId: string, interventionId: number, duration: number): Promise<void> {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/repairs/${repairId}/start`, {
-        method: 'POST'
-      })
+      // Mettre à jour directement dans Firebase Realtime Database
+      const repairRef = ref(database, `repairs/${repairId}`);
+      const updateData = {
+        status: 'in_progress',
+        startedAt: Date.now(),
+        halfwayNotified: false,
+        completedNotified: false,
+        updatedAt: new Date().toISOString(),
+        interventionDuration: duration,
+        interventionId: interventionId
+      };
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      console.log('✅ Réparation démarrée:', data)
-      return data
+      await update(repairRef, updateData);
+      console.log('✅ Réparation démarrée:', repairId);
     } catch (error) {
-      console.error('❌ Erreur démarrage réparation:', error)
-      throw new Error('Erreur lors du démarrage de la réparation: ' + error)
+      console.error('❌ Erreur démarrage réparation:', error);
+      throw error;
+    }
+  }
+
+  // Mettre à jour le statut d'une réparation
+  async updateRepairStatus(repairId: string, updateData: Record<string, unknown>): Promise<void> {
+    try {
+      const repairRef = ref(database, `repairs/${repairId}`);
+      const updates = {
+        ...updateData,
+        updatedAt: new Date().toISOString()
+      };
+      
+      await update(repairRef, updates);
+      console.log('✅ Statut réparation mis à jour:', repairId, updates);
+    } catch (error) {
+      console.error('❌ Erreur mise à jour statut:', error);
+      throw error;
     }
   }
 }
