@@ -1,8 +1,7 @@
-import { getDatabase, ref, get, onValue } from 'firebase/database'
-import { initializeApp, FirebaseApp } from 'firebase/app'
-import { firebaseConfig } from '../firebase/config-simple'
+import { ref, get, onValue, getDatabase } from 'firebase/database'
+import { auth } from '../firebase/config-simple'
 
-const firebaseApp = initializeApp(firebaseConfig, 'intervention-service')
+const database = getDatabase()
 
 export interface Intervention {
   id: number
@@ -16,17 +15,28 @@ export interface Intervention {
 }
 
 export class InterventionService {
-  private database = getDatabase(firebaseApp)
-  private baseUrl = 'http://localhost:8000/api' // Gardé comme fallback
+  private database = database
 
   async getInterventions(): Promise<Intervention[]> {
     try {
-      // Essayer d'abord depuis Firebase Realtime Database
+      // Vérifier l'authentification
+      const currentUser = auth.currentUser
+      console.log('🔐 Utilisateur actuel:', currentUser?.uid || 'Non connecté')
+      
+      if (!currentUser) {
+        console.error('❌ Utilisateur non authentifié')
+        throw new Error('Utilisateur non authentifié')
+      }
+      
       const interventionsRef = ref(this.database, 'interventions')
+      console.log('📡 Tentative de lecture de la référence:', interventionsRef.toString())
+      
       const snapshot = await get(interventionsRef)
       
       if (snapshot.exists()) {
         const data = snapshot.val()
+        console.log('📊 Données brutes reçues:', data)
+        
         // Convertir l'objet en tableau
         const interventions: Intervention[] = Object.keys(data).map(key => ({
           id: parseInt(key),
@@ -35,12 +45,12 @@ export class InterventionService {
         console.log('✅ Interventions récupérées depuis Firebase:', interventions.length)
         return interventions
       } else {
-        console.log('📭 Aucune intervention trouvée dans Firebase, fallback vers API Laravel')
-        return this.getInterventionsFromAPI()
+        console.log('📭 Aucune intervention trouvée dans Firebase')
+        return []
       }
     } catch (error) {
-      console.warn('⚠️ Erreur Firebase, fallback vers API Laravel:', error)
-      return this.getInterventionsFromAPI()
+      console.error('❌ Erreur lors de la récupération des interventions:', error)
+      throw new Error('Erreur lors de la récupération des interventions: ' + error)
     }
   }
 
@@ -52,24 +62,6 @@ export class InterventionService {
     } catch (error) {
       console.error('Erreur lors de la récupération des interventions actives:', error)
       throw new Error('Erreur lors de la récupération des interventions actives: ' + error)
-    }
-  }
-
-  // Méthode fallback vers API Laravel
-  private async getInterventionsFromAPI(): Promise<Intervention[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/interventions`)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      console.log('✅ Interventions récupérées depuis API Laravel:', data.length)
-      return data
-    } catch (error) {
-      console.error('❌ Erreur API Laravel:', error)
-      throw new Error('Erreur lors de la récupération des interventions: ' + error)
     }
   }
 
@@ -90,35 +82,10 @@ export class InterventionService {
       }
     }, (error) => {
       console.error('Erreur écoute Firebase:', error)
-      // En cas d'erreur, essayer l'API Laravel
-      this.getInterventionsFromAPI().then(callback).catch(console.error)
+      callback([])
     })
   }
 
-  // Créer une intervention (si besoin depuis le mobile)
-  async createIntervention(intervention: Omit<Intervention, 'id' | 'created_at' | 'updated_at'>): Promise<Intervention> {
-    try {
-      // Créer via API Laravel (qui synchronisera avec Firebase)
-      const response = await fetch(`${this.baseUrl}/interventions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(intervention)
-      })
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      console.log('✅ Intervention créée via API Laravel:', data.intervention)
-      return data.intervention
-    } catch (error) {
-      console.error('❌ Erreur création intervention:', error)
-      throw new Error('Erreur lors de la création de l\'intervention: ' + error)
-    }
-  }
 }
 
 export const interventionService = new InterventionService()

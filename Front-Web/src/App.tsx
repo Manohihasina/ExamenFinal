@@ -8,6 +8,7 @@ import RepairsGroupedView from './pages/RepairsGroupedView';
 import ApiTest from './pages/ApiTest';
 import DebugPage from './pages/DebugPage';
 import AddIntervention from './pages/AddIntervention';
+import SlotsPage from './pages/SlotsPage';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/repairs" element={<RepairsInProgress />} />
+              <Route path="/slots" element={<SlotsPage />} />
               <Route path="/repairs-grouped" element={<RepairsGroupedView />} />
               <Route path="/add-intervention" element={<AddIntervention />} />
               <Route path="/test" element={<ApiTest />} />

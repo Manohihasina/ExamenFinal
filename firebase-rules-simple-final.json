@@ -1,0 +1,42 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    
+    "cars": {
+      "$carId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "interventions": {
+      ".indexOn": ["id", "is_active"],
+      "$interventionId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "repairs": {
+      "$repairId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "repair_slots": {
+      "$slotId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "users": {
+      "$userId": {
+        ".read": "auth != null && ($userId === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && ($userId === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+      }
+    }
+  }
+}

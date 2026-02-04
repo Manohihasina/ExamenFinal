@@ -385,10 +385,10 @@ export const apiService = {
   },
 
   // Cars with grouped repairs from Firebase
-  async getCarsWithGroupedRepairs(): Promise<any[]> {
+  async getCarsWithGroupedRepairs(): Promise<unknown[]> {
     try {
       console.log('🚗🔧 Fetching cars with grouped repairs...');
-      const response = await api.get<any[]>('/clients/cars-with-repairs');
+      const response = await api.get<unknown[]>('/clients/cars-with-repairs');
       console.log(`✅ Found ${response.data.length} cars with repairs`);
       return response.data;
     } catch (error) {

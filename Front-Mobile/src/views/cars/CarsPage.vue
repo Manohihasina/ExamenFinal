@@ -178,6 +178,7 @@ import {
 } from 'ionicons/icons'
 import { authService } from '@/services/auth.service'
 import { carService, type Car } from '@/services/car.service'
+import { RealtimeService } from '@/services/realtime.service'
 
 const loading = ref(true)
 const saving = ref(false)
@@ -195,6 +196,24 @@ const carForm = reactive({
 
 onMounted(async () => {
   await loadCars()
+  
+  // Synchroniser les voitures existantes avec Realtime Database
+  try {
+    const storedUser = localStorage.getItem('user')
+    let currentUser = null
+    
+    if (storedUser) {
+      currentUser = JSON.parse(storedUser)
+    } else {
+      currentUser = authService.getCurrentUser()
+    }
+    
+    if (currentUser) {
+      await carService.syncUserCarsToRealtime(currentUser.uid || currentUser.id)
+    }
+  } catch (error) {
+    console.warn('⚠️ Erreur synchronisation Realtime Database:', error)
+  }
 })
 
 const loadCars = async () => {

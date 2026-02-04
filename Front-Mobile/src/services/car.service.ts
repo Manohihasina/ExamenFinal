@@ -11,6 +11,7 @@ import {
   where,
   Timestamp
 } from 'firebase/firestore'
+import { RealtimeService } from './realtime.service'
 
 export interface Car {
   id?: string
@@ -37,6 +38,21 @@ export class CarService {
       }
 
       const docRef = await addDoc(this.carsCollection, car)
+      
+      // Synchroniser avec Realtime Database via RealtimeService
+      const fullCar: Car = { ...car, id: docRef.id }
+      await RealtimeService.createCar({
+        id: fullCar.id!,
+        userId: fullCar.userId,
+        brand: fullCar.brand,
+        model: fullCar.model,
+        licensePlate: fullCar.licensePlate,
+        year: fullCar.year,
+        color: fullCar.color,
+        createdAt: fullCar.createdAt.toMillis(),
+        updatedAt: fullCar.updatedAt.toMillis()
+      })
+      
       return docRef.id
     } catch (error) {
       throw new Error('Erreur lors de l\'ajout de la voiture: ' + error)
@@ -119,9 +135,19 @@ export class CarService {
   async updateCar(carId: string, carData: Partial<Car>): Promise<void> {
     try {
       const carDoc = doc(db, 'garage', carId)
-      await updateDoc(carDoc, {
+      const updatedCar = {
         ...carData,
         updatedAt: Timestamp.now()
+      }
+      await updateDoc(carDoc, updatedCar)
+      
+      // Synchroniser avec Realtime Database via RealtimeService
+      await RealtimeService.updateCar(carId, {
+        brand: carData.brand,
+        model: carData.model,
+        licensePlate: carData.licensePlate,
+        year: carData.year,
+        color: carData.color
       })
     } catch (error) {
       throw new Error('Erreur lors de la mise à jour de la voiture: ' + error)
@@ -133,6 +159,9 @@ export class CarService {
     try {
       const carDoc = doc(db, 'garage', carId)
       await deleteDoc(carDoc)
+      
+      // Supprimer de Realtime Database via RealtimeService
+      await RealtimeService.deleteCar(carId)
     } catch (error) {
       throw new Error('Erreur lors de la suppression de la voiture: ' + error)
     }
@@ -161,6 +190,26 @@ export class CarService {
       return true
     } catch (error) {
       throw new Error('Erreur lors de la vérification de la plaque d\'immatriculation: ' + error)
+    }
+  }
+
+  // Écouter les changements des voitures d'un utilisateur depuis Realtime Database
+  listenToUserCars(userId: string, callback: (cars: any[]) => void) {
+    return RealtimeService.listenToUserCars(userId, callback)
+  }
+
+  // Synchroniser toutes les voitures d'un utilisateur vers Realtime Database
+  async syncUserCarsToRealtime(userId: string): Promise<void> {
+    try {
+      const cars = await this.getUserCars(userId)
+      console.log(`🔄 Synchronisation de ${cars.length} voitures vers Realtime Database`)
+      
+      await RealtimeService.syncUserCarsToRealtime(userId, cars)
+      
+      console.log('✅ Synchronisation terminée')
+    } catch (error) {
+      console.error('❌ Erreur synchronisation批量:', error)
+      throw error
     }
   }
 }

@@ -20,6 +20,8 @@ class Car extends Model
         'color',
         'vin',
         'status',
+        'firebase_id', // Ajouter le champ Firebase ID
+        'mileage', // Ajouter le champ mileage
     ];
 
     protected $casts = [
