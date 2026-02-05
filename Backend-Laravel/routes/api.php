@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WaitingSlotController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\API\FCMTokenController;
+use App\Http\Controllers\PaymentController;
 
 // Test routes
 Route::prefix('test')->group(function () {
@@ -95,4 +96,13 @@ Route::prefix('waiting-slots')->group(function () {
 Route::middleware('auth:sanctum')->prefix('fcm-token')->group(function () {
     Route::post('/', [FCMTokenController::class, 'store']);
     Route::delete('/', [FCMTokenController::class, 'destroy']);
+});
+
+// Payments
+Route::prefix('payments')->group(function () {
+    Route::get('/', [PaymentController::class, 'index']);
+    Route::post('/', [PaymentController::class, 'store']);
+    Route::get('/{id}', [PaymentController::class, 'show']);
+    Route::put('/{id}/status', [PaymentController::class, 'updateStatus']);
+    Route::get('/stats', [PaymentController::class, 'stats']);
 });

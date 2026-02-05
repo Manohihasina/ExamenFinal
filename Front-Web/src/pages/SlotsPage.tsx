@@ -400,13 +400,7 @@ const SlotsPage: React.FC = () => {
           };
         });
         
-        toast({
-          title: 'Toutes les réparations terminées',
-          description: `La voiture ${carId} a terminé toutes ses interventions. Total: ${totalPrice}€`,
-          status: 'info',
-          duration: 5000,
-          isClosable: true,
-        });
+    
       } else {
         console.log('🔍 [DEBUG] Pas encore toutes les réparations terminées');
       }

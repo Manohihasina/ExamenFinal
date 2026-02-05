@@ -28,7 +28,7 @@
             </div>
             <div class="summary-item">
               <span>Réparations en attente:</span>
-              <span>{{ pendingRepairs.length }}</span>
+              <span>{{ waitingSlots.length }}</span>
             </div>
           </div>
         </div>
@@ -36,26 +36,27 @@
         <!-- Pending Payments -->
         <div class="pending-payments">
           <h3>Réparations en attente de paiement</h3>
-          <div class="payments-list" v-if="pendingRepairs.length > 0">
+          <div class="payments-list" v-if="waitingSlots.length > 0">
             <div 
-              v-for="repair in pendingRepairs" 
-              :key="repair.id"
+              v-for="slot in waitingSlots" 
+              :key="slot.id"
               class="payment-item"
+              @click="selectWaitingSlotForPayment(slot)"
             >
               <div class="repair-info">
-                <h4>{{ repair.interventionName }}</h4>
-                <p>{{ repair.carName }} • {{ repair.carModel }}</p>
-                <span class="repair-date">{{ formatDate(repair.completedAt) }}</span>
+                <h4>Voiture: {{ slot.carId }}</h4>
+                <p>{{ slot.interventions.length }} intervention(s)</p>
+                <span class="repair-date">{{ formatDate(slot.createdAt) }}</span>
+                <div class="interventions-list">
+                  <div v-for="intervention in slot.interventions" :key="intervention.id" class="intervention-item">
+                    <span>• {{ intervention.name }}</span>
+                    <span>{{ intervention.price }}€</span>
+                  </div>
+                </div>
               </div>
               <div class="repair-amount">
-                <span class="amount">{{ repair.interventionPrice }}€</span>
-                <ion-button 
-                  fill="clear" 
-                  size="small"
-                  @click="selectRepairForPayment(repair)"
-                >
-                  Payer
-                </ion-button>
+                <span class="amount">{{ slot.totalPrice }}€</span>
+                <ion-badge color="warning">En attente</ion-badge>
               </div>
             </div>
           </div>
@@ -69,44 +70,44 @@
         </div>
 
         <!-- Payment Methods -->
-        <div class="payment-methods" v-if="selectedRepair">
-          <h3>Méthode de paiement</h3>
-          <div class="methods-list">
+        <div class="payment-methods" v-if="selectedWaitingSlot">
+          <h3>Méthodes de paiement pour {{ selectedWaitingSlot.totalPrice }}€</h3>
+          <div class="payment-options">
             <div 
               v-for="method in paymentMethods" 
               :key="method.id"
-              class="method-item"
-              :class="{ 'selected': selectedMethod?.id === method.id }"
+              :class="['payment-option', { 'selected': selectedMethod?.id === method.id }]"
               @click="selectPaymentMethod(method)"
             >
-              <div class="method-icon">
-                <ion-icon :icon="method.icon" />
+              <div class="payment-option-radio">
+                <div class="radio-circle">
+                  <div class="radio-dot"></div>
+                </div>
               </div>
-              <div class="method-info">
-                <h4>{{ method.name }}</h4>
-                <p>{{ method.description }}</p>
-              </div>
-              <div class="method-radio">
-                <ion-radio 
-                  :value="method.id" 
-                  :checked="selectedMethod?.id === method.id"
-                />
+              <div class="payment-option-content">
+                <div class="method-icon">
+                  <ion-icon :icon="method.icon"></ion-icon>
+                </div>
+                <div class="method-info">
+                  <h4>{{ method.name }}</h4>
+                  <p>{{ method.description }}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Payment Action -->
-        <div class="payment-action" v-if="selectedRepair && selectedMethod">
-          <ion-button 
-            expand="block" 
-            size="large"
-            @click="processPayment"
-            :disabled="processing"
-          >
-            <ion-icon :icon="processing ? carOutline : cardOutline" :class="processing ? 'saving-car' : ''" slot="start" />
-            {{ processing ? 'Traitement...' : `Payer ${selectedRepair.interventionPrice}€` }}
-          </ion-button>
+          
+          <div class="payment-actions">
+            <ion-button 
+              expand="block" 
+              color="success" 
+              @click="processPayment"
+              :disabled="!selectedMethod || processing"
+              class="pay-button"
+            >
+              <ion-icon :icon="processing ? cardOutline : cardSharp" :class="processing ? 'saving-car' : ''" slot="start" />
+              {{ processing ? 'Traitement...' : `Payer ${selectedWaitingSlot.totalPrice}€` }}
+            </ion-button>
+          </div>
         </div>
       </div>
     </ion-content>
@@ -114,38 +115,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
+import { ref, onMounted, computed } from 'vue'
+import { 
+  IonPage, 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
   IonContent,
   IonButton,
-  IonIcon,
-  IonRadio,
   IonButtons,
-} from '@ionic/vue';
-import {
-  cardOutline,
+  IonIcon,
+  IonBadge,
+  toastController,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRadio,
+  IonRadioGroup
+} from '@ionic/vue'
+import { 
+  refreshOutline,
   cardSharp,
   walletOutline,
   cashOutline,
   businessOutline,
   checkmarkCircleOutline,
-  refreshOutline,
-  carOutline,
-} from 'ionicons/icons';
-import { toastController } from '@ionic/vue';
-import CarLoadingSpinner from '@/components/CarLoadingSpinner.vue';
+  cardOutline
+} from 'ionicons/icons'
+import { getDatabase, ref as dbRef, get, onValue, remove, update, set } from 'firebase/database'
+import { getAuth } from 'firebase/auth'
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import CarLoadingSpinner from '@/components/CarLoadingSpinner.vue'
 
-interface Repair {
+interface WaitingSlot {
   id: string;
-  interventionName: string;
-  interventionPrice: number;
-  carName: string;
-  carModel: string;
-  completedAt: Date;
+  carId: string;
+  clientId: string;
+  interventions: Array<{
+    id: string;
+    name: string;
+    price: number;
+  }>;
+  totalPrice: number;
+  createdAt: string;
   status: string;
 }
 
@@ -156,11 +172,12 @@ interface PaymentMethod {
   icon: string;
 }
 
-const pendingRepairs = ref<Repair[]>([]);
-const selectedRepair = ref<Repair | null>(null);
+const waitingSlots = ref<WaitingSlot[]>([]);
+const selectedWaitingSlot = ref<WaitingSlot | null>(null);
 const selectedMethod = ref<PaymentMethod | null>(null);
 const processing = ref(false);
 const loading = ref(true);
+const currentUserId = ref<string>('');
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -190,20 +207,20 @@ const paymentMethods: PaymentMethod[] = [
 ];
 
 const totalAmount = computed(() => {
-  return pendingRepairs.value.reduce((total, repair) => total + repair.interventionPrice, 0);
+  return waitingSlots.value.reduce((total: number, slot: WaitingSlot) => total + slot.totalPrice, 0);
 });
 
-const formatDate = (date: Date) => {
+const formatDate = (date: string) => {
   return new Intl.DateTimeFormat('fr-FR', {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
-  }).format(date);
+  }).format(new Date(date));
 };
 
-const selectRepairForPayment = (repair: Repair) => {
-  selectedRepair.value = repair;
-  selectedMethod.value = null; // Reset payment method
+const selectWaitingSlotForPayment = (slot: WaitingSlot) => {
+  selectedWaitingSlot.value = slot;
+  selectedMethod.value = null;
 };
 
 const selectPaymentMethod = (method: PaymentMethod) => {
@@ -211,7 +228,7 @@ const selectPaymentMethod = (method: PaymentMethod) => {
 };
 
 const processPayment = async () => {
-  if (!selectedRepair.value || !selectedMethod.value) return;
+  if (!selectedWaitingSlot.value || !selectedMethod.value) return;
 
   processing.value = true;
 
@@ -219,9 +236,91 @@ const processPayment = async () => {
     // Simuler le traitement du paiement
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Afficher le succès
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('Utilisateur non connecté');
+    }
+
+    // Récupérer les informations du client
+    const clientName = user.displayName || 'Client inconnu';
+    const clientId = selectedWaitingSlot.value.clientId;
+    const paymentData = {
+      waiting_slot_id: selectedWaitingSlot.value.id,
+      client_id: clientId,
+      client_name: clientName,
+      car_id: selectedWaitingSlot.value.carId,
+      interventions: selectedWaitingSlot.value.interventions,
+      total_price: selectedWaitingSlot.value.totalPrice,
+      payment_method: selectedMethod.value.name,
+      payment_date: new Date().toISOString(),
+      status: 'paid'
+    };
+
+    console.log('🔍 [DEBUG] Création des enregistrements de paiement:', paymentData);
+
+    // 1. Créer l'enregistrement dans Firestore
+    const firestore = getFirestore();
+    const paymentsCollection = collection(firestore, 'payments');
+    const firestoreDoc = await addDoc(paymentsCollection, {
+      ...paymentData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    console.log('✅ [DEBUG] Enregistrement Firestore créé:', firestoreDoc.id);
+
+    // 2. Créer l'enregistrement dans Realtime Database
+    const database = getDatabase();
+    const realtimePaymentsRef = dbRef(database, `payments/${firestoreDoc.id}`);
+    await set(realtimePaymentsRef, {
+      ...paymentData,
+      firestoreId: firestoreDoc.id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+    console.log('✅ [DEBUG] Enregistrement Realtime Database créé');
+
+    // 3. Créer l'enregistrement dans la base de données relationnelle (Laravel)
+    try {
+      const response = await fetch('http://localhost:8000/api/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          ...paymentData,
+          firestore_id: firestoreDoc.id
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.warn('⚠️ [DEBUG] Erreur API Laravel:', errorData);
+        // On continue quand même si l'API Laravel échoue
+      } else {
+        const result = await response.json();
+        console.log('✅ [DEBUG] Enregistrement Laravel créé:', result);
+      }
+    } catch (apiError) {
+      console.warn('⚠️ [DEBUG] Erreur réseau API Laravel:', apiError);
+      // On continue quand même si l'API Laravel n'est pas accessible
+    }
+
+    // 4. Supprimer le waiting slot de la base de données
+    await remove(dbRef(database, `waiting_slots/${selectedWaitingSlot.value.id}`));
+    console.log('✅ [DEBUG] Waiting slot supprimé');
+    
+    // 5. Retirer de la liste locale
+    waitingSlots.value = waitingSlots.value.filter(s => s.id !== selectedWaitingSlot.value?.id);
+    
+    // 6. Réinitialiser la sélection
+    selectedWaitingSlot.value = null;
+    selectedMethod.value = null;
+
+    // 7. Afficher le succès
     const toast = await toastController.create({
-      message: `Paiement de ${selectedRepair.value.interventionPrice}€ effectué avec succès!`,
+      message: `Paiement de ${paymentData.total_price}€ effectué avec succès!`,
       duration: 3000,
       color: 'success',
       icon: checkmarkCircleOutline,
@@ -229,14 +328,10 @@ const processPayment = async () => {
     });
     await toast.present();
 
-    // Retirer la réparation de la liste
-    pendingRepairs.value = pendingRepairs.value.filter(r => r.id !== selectedRepair.value?.id);
-    
-    // Réinitialiser la sélection
-    selectedRepair.value = null;
-    selectedMethod.value = null;
+    console.log('🎉 [DEBUG] Paiement traité avec succès pour:', paymentData);
 
   } catch (error) {
+    console.error('❌ [DEBUG] Erreur lors du paiement:', error);
     const toast = await toastController.create({
       message: 'Erreur lors du traitement du paiement',
       duration: 3000,
@@ -250,56 +345,90 @@ const processPayment = async () => {
 };
 
 const refreshData = () => {
-  loadPendingRepairs();
+  loadWaitingSlots();
 };
 
-const loadPendingRepairs = async () => {
+const loadWaitingSlots = async () => {
   loading.value = true;
   try {
-    // Simuler un délai de chargement
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simuler des réparations en attente de paiement
-    pendingRepairs.value = [
-    {
-      id: '1',
-      interventionName: 'Changement d\'huile',
-      interventionPrice: 45,
-      carName: 'Peugeot',
-      carModel: '208',
-      completedAt: new Date(Date.now() - 86400000), // 1 day ago
-      status: 'completed'
-    },
-    {
-      id: '2',
-      interventionName: 'Freinage avant',
-      interventionPrice: 120,
-      carName: 'Renault',
-      carModel: 'Clio',
-      completedAt: new Date(Date.now() - 172800000), // 2 days ago
-      status: 'completed'
-    },
-    {
-      id: '3',
-      interventionName: 'Diagnostic électronique',
-      interventionPrice: 80,
-      carName: 'Peugeot',
-      carModel: '208',
-      completedAt: new Date(Date.now() - 259200000), // 3 days ago
-      status: 'completed'
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      console.error('Utilisateur non connecté');
+      return;
     }
-  ];
-  } finally {
+    
+    currentUserId.value = user.uid;
+    console.log('🔍 [DEBUG] Chargement waiting slots pour utilisateur:', currentUserId.value);
+    
+    const database = getDatabase();
+    const waitingSlotsRef = dbRef(database, 'waiting_slots');
+    
+    // Écouter les changements en temps réel
+    onValue(waitingSlotsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const slotsArray: WaitingSlot[] = [];
+        
+        Object.keys(data).forEach(key => {
+          const slot = data[key];
+          // Filtrer pour n'afficher que les slots du client connecté
+          if (slot.clientId === currentUserId.value && slot.status === 'waiting_payment') {
+            slotsArray.push({
+              id: key,
+              ...slot
+            });
+          }
+        });
+        
+        // Trier par date de création (plus récent en premier)
+        slotsArray.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        
+        waitingSlots.value = slotsArray;
+        console.log('✅ [DEBUG] Waiting slots chargés:', slotsArray.length);
+      } else {
+        waitingSlots.value = [];
+        console.log('🔍 [DEBUG] Aucun waiting slot trouvé');
+      }
+      loading.value = false;
+    });
+    
+  } catch (error) {
+    console.error('Erreur chargement waiting slots:', error);
     loading.value = false;
   }
 };
 
 onMounted(() => {
-  loadPendingRepairs();
+  loadWaitingSlots();
 });
 </script>
 
 <style scoped>
+.interventions-list {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.intervention-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 0.9rem;
+}
+
+.intervention-item span:first-child {
+  color: #666;
+}
+
+.intervention-item span:last-child {
+  font-weight: bold;
+  color: #2563eb;
+}
+
 .container {
   padding: 16px;
 }
@@ -399,65 +528,194 @@ onMounted(() => {
 }
 
 .payment-methods h3 {
-  margin: 0 0 16px 0;
+  margin: 0 0 20px 0;
   font-size: 1.1rem;
   font-weight: 600;
+  color: #333;
 }
 
-.methods-list {
+.payment-options {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.method-item {
+.payment-option {
   display: flex;
   align-items: center;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
   padding: 16px;
-  background: var(--ion-color-light);
-  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.method-item:hover {
-  background: var(--ion-color-light-tint);
+.payment-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.method-item.selected {
-  background: var(--ion-color-primary-tint);
-  border: 2px solid var(--ion-color-primary);
+.payment-option:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
 }
 
-.method-icon {
-  margin-right: 12px;
-  width: 40px;
-  height: 40px;
+.payment-option:hover::before {
+  opacity: 1;
+}
+
+.payment-option.selected {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+}
+
+.payment-option.selected::before {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+}
+
+.payment-option-radio {
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.radio-circle {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e5e7eb;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ion-color-light-shade);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.payment-option.selected .radio-circle {
+  border-color: #3b82f6;
+  background: #3b82f6;
+}
+
+.radio-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
   border-radius: 50%;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.payment-option.selected .radio-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.payment-option-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.method-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.payment-option:nth-child(2) .method-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
+}
+
+.payment-option:nth-child(3) .method-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+}
+
+.payment-option:nth-child(4) .method-icon {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
 }
 
 .method-info {
   flex: 1;
+  min-width: 0;
 }
 
 .method-info h4 {
   margin: 0 0 4px 0;
   font-size: 1rem;
   font-weight: 600;
+  color: #1f2937;
+  line-height: 1.2;
 }
 
 .method-info p {
   margin: 0;
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.3;
 }
 
-.payment-action {
-  margin-top: 32px;
+.payment-actions {
+  margin-top: 24px;
+}
+
+.pay-button {
+  --background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --border-radius: 12px;
+  --box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+  font-size: 1rem;
+  height: 56px;
+  transition: all 0.3s ease;
+}
+
+.pay-button:hover:not(:disabled) {
+  --box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.pay-button:disabled {
+  --background: #9ca3af;
+  --box-shadow: none;
+  transform: none;
+}
+
+.saving-car {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .empty-state {
