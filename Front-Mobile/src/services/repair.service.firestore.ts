@@ -1,4 +1,5 @@
-import { database, storage } from '@/firebase/config'
+import { storage } from '@/firebase/config'
+import { db } from '@/firebase/config-simple'
 import { 
   ref as dbRef,
   set,
@@ -9,7 +10,20 @@ import {
   push
 } from 'firebase/database'
 import { 
-  ref as storageRef,
+  collection,
+  addDoc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  orderBy,
+  Timestamp
+} from 'firebase/firestore'
+import { 
+  ref,
   uploadBytes,
   getDownloadURL,
   deleteObject

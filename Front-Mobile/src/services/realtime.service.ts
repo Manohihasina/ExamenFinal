@@ -123,11 +123,11 @@ export class RealtimeService {
       
       await set(repairRef, realtimeRepair)
       console.log('✅ [REALTIME] Réparation créée avec succès:', repairData.id)
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ [REALTIME] Erreur createRepair:', error);
       console.error('❌ [REALTIME] Détails erreur:', {
         message: error.message,
-        code: (error as any).code,
+        code: error.code,
         stack: error.stack
       });
       throw error
@@ -192,11 +192,11 @@ export class RealtimeService {
       
       await set(carRef, carData)
       console.log('✅ [REALTIME] Voiture créée avec succès:', carData.id)
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ [REALTIME] Erreur createCar:', error);
       console.error('❌ [REALTIME] Détails erreur:', {
         message: error.message,
-        code: (error as any).code,
+        code: error.code,
         stack: error.stack
       });
       throw error
@@ -271,6 +271,42 @@ export class RealtimeService {
       console.log('✅ [REALTIME] Synchronisation des voitures terminée')
     } catch (error) {
       console.error('❌ [REALTIME] Erreur synchronisation voitures:', error)
+      throw error
+    }
+  }
+
+  // Récupérer une réparation par son ID
+  static async getRepairById(repairId: string): Promise<RealtimeRepair | null> {
+    try {
+      const repairRef = ref(database, `repairs/${repairId}`)
+      const snapshot = await get(repairRef)
+      
+      if (snapshot.exists()) {
+        const repair = snapshot.val()
+        return {
+          id: repairId,
+          ...repair
+        } as RealtimeRepair
+      }
+      
+      return null
+    } catch (error) {
+      console.error('Erreur getRepairById:', error)
+      throw error
+    }
+  }
+
+  // Mettre à jour le prix d'une réparation
+  static async updateRepairPrice(repairId: string, newPrice: number): Promise<void> {
+    try {
+      const repairRef = ref(database, `repairs/${repairId}`)
+      await update(repairRef, {
+        interventionPrice: newPrice,
+        updatedAt: new Date().toISOString()
+      })
+      console.log('✅ Prix de la réparation mis à jour:', repairId, newPrice)
+    } catch (error) {
+      console.error('Erreur updateRepairPrice:', error)
       throw error
     }
   }

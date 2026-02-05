@@ -1,4 +1,4 @@
-import { ref, get, onValue, getDatabase } from 'firebase/database'
+import { ref, get, onValue, getDatabase, set, push } from 'firebase/database'
 import { auth } from '../firebase/config-simple'
 
 const database = getDatabase()
@@ -62,6 +62,43 @@ export class InterventionService {
     } catch (error) {
       console.error('Erreur lors de la récupération des interventions actives:', error)
       throw new Error('Erreur lors de la récupération des interventions actives: ' + error)
+    }
+  }
+
+  // Créer une nouvelle intervention
+  async createIntervention(interventionData: {
+    name: string
+    price: string
+    duration_seconds: number
+    description: string
+    is_active?: boolean
+  }): Promise<Intervention> {
+    try {
+      const currentUser = auth.currentUser
+      if (!currentUser) {
+        throw new Error('Utilisateur non authentifié')
+      }
+
+      const interventionsRef = ref(this.database, 'interventions')
+      const newInterventionRef = push(interventionsRef)
+      
+      const intervention: Intervention = {
+        id: parseInt(newInterventionRef.key || '0'),
+        name: interventionData.name,
+        price: interventionData.price,
+        duration_seconds: interventionData.duration_seconds,
+        description: interventionData.description,
+        is_active: interventionData.is_active ?? true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+
+      await set(newInterventionRef, intervention)
+      console.log('✅ Intervention créée avec succès:', intervention)
+      return intervention
+    } catch (error) {
+      console.error('❌ Erreur lors de la création de l\'intervention:', error)
+      throw new Error('Erreur lors de la création de l\'intervention: ' + error)
     }
   }
 
