@@ -172,6 +172,109 @@ export class RealtimeService {
     }
   }
 
+  // Créer une voiture dans Realtime Database
+  static async createCar(carData: {
+    id: string
+    userId: string
+    brand: string
+    model: string
+    licensePlate: string
+    year?: number
+    color?: string
+    createdAt: number
+    updatedAt: number
+  }): Promise<void> {
+    try {
+      console.log('🔍 [REALTIME] createCar appelé avec:', carData);
+      
+      const carRef = ref(database, `cars/${carData.id}`)
+      console.log('🔍 [REALTIME] Référence voiture créée:', carRef.toString());
+      
+      await set(carRef, carData)
+      console.log('✅ [REALTIME] Voiture créée avec succès:', carData.id)
+    } catch (error) {
+      console.error('❌ [REALTIME] Erreur createCar:', error);
+      console.error('❌ [REALTIME] Détails erreur:', {
+        message: error.message,
+        code: (error as any).code,
+        stack: error.stack
+      });
+      throw error
+    }
+  }
+
+  // Mettre à jour une voiture dans Realtime Database
+  static async updateCar(carId: string, updateData: {
+    brand?: string
+    model?: string
+    licensePlate?: string
+    year?: number
+    color?: string
+  }): Promise<void> {
+    try {
+      const carRef = ref(database, `cars/${carId}`)
+      await update(carRef, updateData)
+      console.log('✅ [REALTIME] Voiture mise à jour avec succès:', carId)
+    } catch (error) {
+      console.error('❌ [REALTIME] Erreur updateCar:', error);
+      throw error
+    }
+  }
+
+  // Supprimer une voiture de Realtime Database
+  static async deleteCar(carId: string): Promise<void> {
+    try {
+      const carRef = ref(database, `cars/${carId}`)
+      await remove(carRef)
+      console.log('✅ [REALTIME] Voiture supprimée avec succès:', carId)
+    } catch (error) {
+      console.error('❌ [REALTIME] Erreur deleteCar:', error);
+      throw error
+    }
+  }
+
+  // Écouter les voitures d'un utilisateur en temps réel
+  static listenToUserCars(userId: string, callback: (cars: any[]) => void) {
+    const carsRef = ref(database, 'cars')
+    
+    return onValue(carsRef, (snapshot) => {
+      const data = snapshot.val()
+      if (data) {
+        const userCars = Object.values(data).filter((car: any) => car.userId === userId)
+        callback(userCars)
+      }
+    })
+  }
+
+  // Synchroniser toutes les voitures d'un utilisateur vers Realtime Database
+  static async syncUserCarsToRealtime(userId: string, cars: any[]): Promise<void> {
+    try {
+      console.log(`🔄 [REALTIME] Synchronisation de ${cars.length} voitures vers Realtime Database`)
+      
+      for (const car of cars) {
+        const carData = {
+          id: car.id,
+          userId: car.userId,
+          brand: car.brand,
+          model: car.model,
+          licensePlate: car.licensePlate,
+          year: car.year,
+          color: car.color,
+          createdAt: car.createdAt?.toMillis() || Date.now(),
+          updatedAt: car.updatedAt?.toMillis() || Date.now()
+        }
+        
+        const carRef = ref(database, `cars/${car.id}`)
+        await set(carRef, carData)
+      }
+      
+      console.log('✅ [REALTIME] Synchronisation des voitures terminée')
+    } catch (error) {
+      console.error('❌ [REALTIME] Erreur synchronisation voitures:', error)
+      throw error
+    }
+  }
+
   // Demander la permission de notification
   static async requestNotificationPermission(): Promise<boolean> {
     if ('Notification' in window) {

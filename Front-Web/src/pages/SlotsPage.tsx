@@ -57,6 +57,7 @@ const SlotsPage: React.FC = () => {
   const [repairProgress, setRepairProgress] = useState<Record<string, { progress: number; remaining: number }>>({});
   const [slotRepairs, setSlotRepairs] = useState<Record<number, any[]>>({});
   const [completedCars, setCompletedCars] = useState<Record<string, { carId: string; interventions: any[]; totalPrice: number }>>({});
+  const [halfwayNotified, setHalfwayNotified] = useState<Record<string, boolean>>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -291,12 +292,14 @@ const SlotsPage: React.FC = () => {
         [repairId]: { progress, remaining: Math.ceil(remaining / 1000) }
       }));
       
-      // À mi-parcours
-      if (currentTime >= halfwayTime && currentTime < endTime) {
+      // À mi-parcours (afficher la notification une seule fois)
+      if (currentTime >= halfwayTime && currentTime < endTime && !halfwayNotified[repairId]) {
         repairSlotService.updateRepairStatus(repairId, {
           status: 'in_progress',
           halfwayNotified: true
         });
+        
+        setHalfwayNotified(prev => ({ ...prev, [repairId]: true }));
         
         toast({
           title: 'Réparation à mi-parcours',

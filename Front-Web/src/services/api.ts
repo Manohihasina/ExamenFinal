@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getDatabase, ref, get } from 'firebase/database';
 import type { Client, FirebaseAuthUser, Car, Repair, Intervention, RepairSlot, WaitingSlot, DashboardStats, RepairWithDetails, CarWithClient } from '../types';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
@@ -43,12 +44,99 @@ api.interceptors.response.use(
 );
 
 export const apiService = {
+  // Récupérer les repairs depuis Firebase Realtime Database
+  async getRepairsFromRealtime(): Promise<Repair[]> {
+    try {
+      console.log('🔥 [DEBUG] Récupération des repairs depuis Firebase Realtime Database...');
+      
+      const database = getDatabase();
+      const repairsRef = ref(database, 'repairs');
+      const snapshot = await get(repairsRef);
+      
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const repairs: Repair[] = [];
+        
+        Object.keys(data).forEach(key => {
+          const repair = data[key];
+          if (repair && typeof repair === 'object' && key !== 'slots') { // Exclure la clé 'slots'
+            repairs.push({
+              id: key,
+              car_id: repair.carId || '',
+              user_id: repair.userId || '',
+              intervention_id: repair.interventionId || 0,
+              intervention_name: repair.interventionName || '',
+              intervention_price: typeof repair.interventionPrice === 'number' ? repair.interventionPrice : parseFloat(String(repair.interventionPrice || 0)),
+              intervention_duration: typeof repair.interventionDuration === 'number' ? repair.interventionDuration : parseInt(String(repair.interventionDuration || 0)),
+              status: repair.status || 'pending',
+              started_at: repair.startedAt || null,
+              completed_at: repair.completedAt || null,
+              updated_at: repair.updatedAt || new Date().toISOString(),
+              completed_notified: repair.completedNotified || false,
+              halfway_notified: repair.halfwayNotified || false
+            });
+          }
+        });
+        
+        console.log('✅ [DEBUG] Repairs récupérés depuis Realtime Database:', repairs.length);
+        return repairs;
+      } else {
+        console.log('🔍 [DEBUG] Aucun repair trouvé dans Realtime Database');
+        return [];
+      }
+    } catch (error) {
+      console.error('❌ [DEBUG] Erreur lors de la récupération des repairs depuis Realtime Database:', error);
+      return [];
+    }
+  },
+
+  // Récupérer les interventions depuis Firebase Realtime Database
+  async getInterventionsFromRealtime(): Promise<Intervention[]> {
+    try {
+      console.log('🔥 [DEBUG] Récupération des interventions depuis Firebase Realtime Database...');
+      
+      const database = getDatabase();
+      const interventionsRef = ref(database, 'interventions');
+      const snapshot = await get(interventionsRef);
+      
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const interventions: Intervention[] = [];
+        
+        Object.keys(data).forEach(key => {
+          const intervention = data[key];
+          if (intervention && typeof intervention === 'object') {
+            interventions.push({
+              id: parseInt(key), // Convertir la clé string en number
+              name: intervention.name || '',
+              price: typeof intervention.price === 'number' ? intervention.price : parseFloat(String(intervention.price || 0)),
+              duration_seconds: typeof intervention.duration_seconds === 'number' ? intervention.duration_seconds : parseInt(String(intervention.duration_seconds || 0)),
+              description: intervention.description || '',
+              is_active: intervention.is_active !== false, // Par défaut actif
+              created_at: intervention.created_at || intervention.createdAt || new Date().toISOString(),
+              updated_at: intervention.updated_at || intervention.updatedAt || new Date().toISOString()
+            });
+          }
+        });
+        
+        console.log('✅ [DEBUG] Interventions récupérées depuis Realtime Database:', interventions.length);
+        return interventions;
+      } else {
+        console.log('🔍 [DEBUG] Aucune intervention trouvée dans Realtime Database');
+        return [];
+      }
+    } catch (error) {
+      console.error('❌ [DEBUG] Erreur lors de la récupération des interventions depuis Realtime Database:', error);
+      return [];
+    }
+  },
+
   // Dashboard
   async getDashboardStats(): Promise<DashboardStats> {
     try {
       console.log('📊 Fetching dashboard stats...');
       
-      const [clientsResponse, repairsResponse, interventionsResponse] = await Promise.all([
+      const [clientsResponse] = await Promise.all([
         api.get<FirebaseAuthUser[]>('/clients/firebase').catch(async (err) => {
           console.warn('⚠️ Failed to fetch clients from Firebase Auth:', err.message);
           try {
@@ -58,20 +146,19 @@ export const apiService = {
             console.warn('⚠️ Failed to fetch clients from SQL fallback:', fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr));
             return { data: [] };
           }
-        }),
-        api.get<Repair[]>('/repairs').catch(err => {
-          console.warn('⚠️ Failed to fetch repairs:', err.message);
-          return { data: [] };
-        }),
-        api.get<Intervention[]>('/interventions').catch(err => {
-          console.warn('⚠️ Failed to fetch interventions:', err.message);
-          return { data: [] };
         })
       ]);
 
       const clients = clientsResponse.data;
-      const repairs = repairsResponse.data;
-      const interventions = interventionsResponse.data;
+
+      // Récupérer les repairs et interventions directement depuis Firebase Realtime Database
+      const [repairs, interventions] = await Promise.all([
+        this.getRepairsFromRealtime(),
+        this.getInterventionsFromRealtime()
+      ]);
+      
+      console.log('🔥 [DEBUG] Repairs depuis Realtime Database:', repairs.length);
+      console.log('🔥 [DEBUG] Interventions depuis Realtime Database:', interventions.length);
 
       console.log('📈 Raw data:', { clients: clients.length, repairs: repairs.length, interventions: interventions.length });
 
@@ -87,7 +174,27 @@ export const apiService = {
 
       // Calculate repairs by month for chart
       const repairsByMonth = repairs.reduce((acc: Record<string, number>, repair) => {
-        const month = new Date(repair.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' });
+        let date: Date;
+        
+        // Gérer différents formats de date
+        if (typeof repair.updated_at === 'string') {
+          date = new Date(repair.updated_at);
+        } else if (typeof repair.updated_at === 'number') {
+          // Convertir timestamp Unix en millisecondes si nécessaire
+          const timestamp = repair.updated_at > 1000000000000 ? repair.updated_at : repair.updated_at * 1000;
+          date = new Date(timestamp);
+        } else {
+          // Valeur par défaut
+          date = new Date();
+        }
+        
+        // Vérifier si la date est valide
+        if (isNaN(date.getTime())) {
+          console.warn('⚠️ [DEBUG] Date invalide pour repair:', repair.id, repair.updated_at);
+          return acc; // Ignorer ce repair
+        }
+        
+        const month = date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' });
         acc[month] = (acc[month] || 0) + 1;
         return acc;
       }, {});

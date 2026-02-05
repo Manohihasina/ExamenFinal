@@ -281,31 +281,31 @@ const processPayment = async () => {
     console.log('✅ [DEBUG] Enregistrement Realtime Database créé');
 
     // 3. Créer l'enregistrement dans la base de données relationnelle (Laravel)
-    try {
-      const response = await fetch('http://localhost:8000/api/payments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          ...paymentData,
-          firestore_id: firestoreDoc.id
-        })
-      });
+    // try {
+    //   const response = await fetch('http://localhost:8000/api/payments', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Accept': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //       ...paymentData,
+    //       firestore_id: firestoreDoc.id
+    //     })
+    //   });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.warn('⚠️ [DEBUG] Erreur API Laravel:', errorData);
-        // On continue quand même si l'API Laravel échoue
-      } else {
-        const result = await response.json();
-        console.log('✅ [DEBUG] Enregistrement Laravel créé:', result);
-      }
-    } catch (apiError) {
-      console.warn('⚠️ [DEBUG] Erreur réseau API Laravel:', apiError);
-      // On continue quand même si l'API Laravel n'est pas accessible
-    }
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     console.warn('[DEBUG] Erreur API Laravel:', errorData);
+    //     // On continue quand même si l'API Laravel échoue
+    //   } else {
+    //     const result = await response.json();
+    //     console.log('✅ [DEBUG] Enregistrement Laravel créé:', result);
+    //   }
+    // } catch (apiError) {
+    //   console.warn('[DEBUG] Erreur réseau API Laravel:', apiError);
+    //   // On continue quand même si l'API Laravel n'est pas accessible
+    // }
 
     // 4. Supprimer le waiting slot de la base de données
     await remove(dbRef(database, `waiting_slots/${selectedWaitingSlot.value.id}`));
