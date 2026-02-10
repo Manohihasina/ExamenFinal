@@ -1,0 +1,14 @@
+res://scripts/GarageManager.gd
+res://scripts/firebase/FirebaseService.gd
+res://scripts/player.gd
+res://scripts/ui/GarageComputerUI.gd
+res://scripts/services/RepairSlotServiceGame.gd
+res://scripts/ui/WaitingCarsMenu.gd
+res://scripts/services/RepairSlotService.gd
+res://scenes/main_garage.tscn
+res://scripts/ui/RepairInteractionUI.gd
+res://scripts/car.gd
+res://scripts/ui/NotificationManager.gd
+res://scenes/garage/garage.tscn
+res://scripts/managers/RepairProgressManager.gd
+res://scripts/props/Computer.gd
