@@ -37,6 +37,7 @@ Route::prefix('clients')->group(function () {
     Route::get('/firebase', [ClientController::class, 'indexFromFirestore']);
     Route::get('/firestore/sync', [ClientController::class, 'syncClientsToFirestore']);
     Route::get('/cars-with-repairs', [ClientController::class, 'getCarsWithGroupedRepairs']);
+    Route::get('/{clientId}/repair-history', [ClientController::class, 'getClientRepairHistory']);
     Route::get('/{id}', [ClientController::class, 'show'])->whereNumber('id');
     Route::post('/', [ClientController::class, 'store']);
     Route::put('/{id}', [ClientController::class, 'update'])->whereNumber('id');
@@ -67,6 +68,7 @@ Route::prefix('repairs')->group(function () {
 // Repair Slots
 Route::prefix('slots')->group(function () {
     Route::get('/', [RepairSlotController::class, 'index']);
+    Route::post('/', [RepairSlotController::class, 'store']);
     Route::get('/available', [RepairSlotController::class, 'available']);
     Route::get('/number/{slotNumber}', [RepairSlotController::class, 'show']);
     Route::post('/{slotId}/occupy', [RepairSlotController::class, 'occupy']);

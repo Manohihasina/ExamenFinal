@@ -102,4 +102,23 @@ class ClientController extends Controller
         $carsWithRepairs = $this->firebaseService->getCarsWithGroupedRepairs();
         return response()->json($carsWithRepairs);
     }
+
+    public function getClientRepairHistory(string $clientId): JsonResponse
+    {
+        if (!method_exists($this->firebaseService, 'isAuthAvailable') || !$this->firebaseService->isAuthAvailable()) {
+            return response()->json([
+                'message' => 'Firebase not initialized',
+            ], 500);
+        }
+
+        $repairHistory = $this->firebaseService->getClientRepairHistory($clientId);
+        
+        if (empty($repairHistory)) {
+            return response()->json([
+                'message' => 'Client not found or no repair history available',
+            ], 404);
+        }
+
+        return response()->json($repairHistory);
+    }
 }
