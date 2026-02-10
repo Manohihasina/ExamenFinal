@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://cpeyv5y8lhjop"]
+
+[ext_resource type="Script" uid="uid://d4ailarrwoeop" path="res://coin.gd" id="1_d5gmh"]
+[ext_resource type="ArrayMesh" uid="uid://dmk1fhoafcsay" path="res://blablaba.res" id="2_0t63x"]
+[ext_resource type="Resource" uid="uid://3of8wi0ahaxq" path="res://assets/Joueur/Ressources/piece_dor.tres" id="2_v7riw"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_d5gmh"]
+height = 0.15
+radius = 0.3
+
+[node name="Coin" type="Area3D"]
+script = ExtResource("1_d5gmh")
+item_data = ExtResource("2_v7riw")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+physics_interpolation_mode = 1
+transform = Transform3D(-1.5561254e-08, -0.35, 0, -1.5561254e-08, 6.6873987e-16, 0.355, -0.35600004, 1.5298987e-08, -1.5517543e-08, 0, -0.024300784, 0)
+gi_lightmap_texel_scale = 4.8107
+mesh = ExtResource("2_0t63x")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("CylinderShape3D_d5gmh")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

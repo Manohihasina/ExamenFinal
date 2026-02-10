@@ -1,0 +1,11 @@
+Model Information:
+* title:	Tools asset
+* source:	https://sketchfab.com/3d-models/tools-asset-279db01161c94df7911c6b3dc2c9942e
+* author:	thrd.dim (https://sketchfab.com/thrd.dim)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Tools asset" (https://sketchfab.com/3d-models/tools-asset-279db01161c94df7911c6b3dc2c9942e) by thrd.dim (https://sketchfab.com/thrd.dim) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

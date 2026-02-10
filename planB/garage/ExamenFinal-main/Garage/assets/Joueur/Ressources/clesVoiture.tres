@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://cdblygugofgu6"]
+
+[ext_resource type="Script" uid="uid://bewiv5ciy610m" path="res://assets/Scripts/ItemData.gd" id="1_cnmi4"]
+[ext_resource type="Texture2D" uid="uid://e8mcnh2w1dl" path="res://assets/Images/cles.png" id="1_pyvx0"]
+
+[resource]
+script = ExtResource("1_cnmi4")
+name = "Cles Voiture"
+description = "Amin izay afaka mande amle Camaro be ao"
+icon = ExtResource("1_pyvx0")
+stackable = false
+metadata/_custom_type_script = "uid://bewiv5ciy610m"

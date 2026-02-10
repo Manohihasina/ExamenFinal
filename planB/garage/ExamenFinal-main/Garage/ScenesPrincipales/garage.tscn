@@ -1,0 +1,261 @@
+[gd_scene load_steps=34 format=3 uid="uid://c73057wjcuqcf"]
+
+[ext_resource type="PackedScene" uid="uid://cvcby560lf2o3" path="res://assets/Joueur/player3d.tscn" id="1_mjmn4"]
+[ext_resource type="PackedScene" uid="uid://b50geoa0tfy6c" path="res://assets/player/Car3D/Voiture.tscn" id="3_mjmn4"]
+[ext_resource type="PackedScene" uid="uid://77f7uu7bgcce" path="res://assets/Scenes/clesVrai.tscn" id="4_0jmjn"]
+[ext_resource type="PackedScene" uid="uid://btnd1bh62bj46" path="res://assets/Voiture/CAR_01.glb" id="4_bvirc"]
+[ext_resource type="PackedScene" uid="uid://dpkbck0571atp" path="res://assets/Voiture/LowPolyCar.glb" id="5_vkf0m"]
+[ext_resource type="PackedScene" uid="uid://jtsv3v2wkmfb" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Wall_Slope.gltf" id="6_oilq0"]
+[ext_resource type="Texture2D" uid="uid://brbtohct73mlt" path="res://level/checkboard.png" id="7_e3qa2"]
+[ext_resource type="PackedScene" uid="uid://c1vw6qih5slgp" path="res://assets/Voiture/toyCar.glb" id="8_62wir"]
+[ext_resource type="PackedScene" uid="uid://srvmgxj1ahge" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Doorway.gltf" id="9_ufmdo"]
+[ext_resource type="MeshLibrary" uid="uid://5qtjp5gtc3hp" path="res://assets/MeshLibrary/garageTiles.tres" id="10_q5234"]
+[ext_resource type="PackedScene" uid="uid://dq2ewmar3tect" path="res://assets/Garage/dirty_metal_garage_doors.glb" id="11_27fww"]
+[ext_resource type="Script" uid="uid://dl2s144so5kwb" path="res://RepairZone.gd" id="13_323rg"]
+[ext_resource type="Script" uid="uid://cunx8o7kdj67i" path="res://managers/GarageManager.gd" id="14_owb88"]
+[ext_resource type="PackedScene" uid="uid://qbxm5gy2hqto" path="res://assets/Scenes/toy_car.tscn" id="15_323rg"]
+[ext_resource type="Script" uid="uid://clys51n7d7wej" path="res://assets/Scripts/repairZone2.gd" id="15_lxmlm"]
+[ext_resource type="Script" uid="uid://cls47tc6rj7nb" path="res://PaymentZone.gd" id="16_323rg"]
+[ext_resource type="PackedScene" uid="uid://ca57xv5vpryyo" path="res://assets/elevator.tscn" id="18_3rc1a"]
+[ext_resource type="Script" uid="uid://cb1pa3xgf05f6" path="res://ScenesPrincipales/zone_repar_3.gd" id="18_ye0yu"]
+[ext_resource type="PackedScene" uid="uid://bgaqt11ey6lj7" path="res://assets/Garage/old_wooden_table/scene.gltf" id="19_7wmav"]
+[ext_resource type="PackedScene" uid="uid://ds32kpui2qwge" path="res://assets/Garage/wrinkled/Wrinkled_Tarp_vhtidbb_High.gltf" id="20_rqdlc"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mjmn4"]
+
+[sub_resource type="Sky" id="Sky_v38iq"]
+sky_material = SubResource("ProceduralSkyMaterial_mjmn4")
+
+[sub_resource type="Environment" id="Environment_0jmjn"]
+background_mode = 2
+background_energy_multiplier = 1.01
+sky = SubResource("Sky_v38iq")
+sky_custom_fov = 51.0
+ambient_light_source = 3
+ambient_light_color = Color(0.91058624, 0.7828638, 0.98837274, 1)
+ambient_light_energy = 7.02
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3rc1a"]
+size = Vector3(30.78498, 13.212738, 1.0534973)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_mjmn4"]
+rough = true
+absorbent = true
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_1y551"]
+transparency = 3
+alpha_hash_scale = 1.0
+alpha_antialiasing_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.41462037, 0.46241885, 0.5158407, 1)
+albedo_texture = ExtResource("7_e3qa2")
+
+[sub_resource type="BoxMesh" id="BoxMesh_rao6x"]
+material = SubResource("ORMMaterial3D_1y551")
+size = Vector3(120, 2, 120)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r13b6"]
+size = Vector3(120, 2, 120)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hmexc"]
+size = Vector3(9.904053, 0.30955505, 6.9940796)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vkf0m"]
+albedo_color = Color(0.02274048, 0.6795541, 0.36961213, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_oilq0"]
+material = SubResource("StandardMaterial3D_vkf0m")
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_3rc1a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lxmlm"]
+size = Vector3(0.23248291, 4.3100586, 1)
+
+[node name="GARAGEBE" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.65423936, 0.75628763, 0, -0.75628763, 0.65423936, 0, 8.898426, 3.1149635)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0jmjn")
+
+[node name="Cles" parent="." instance=ExtResource("4_0jmjn")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 22.116894, 2.2041826, 8.673453)
+
+[node name="Porte" parent="." instance=ExtResource("9_ufmdo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7144005, 1, 23.083626)
+
+[node name="Portière" parent="Porte" instance=ExtResource("6_oilq0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9786947, 0.08262992, -0.004310608)
+
+[node name="Portière2" parent="Porte" instance=ExtResource("6_oilq0")]
+transform = Transform3D(-0.9999577, 0, 0.0091976635, 0, 1, 0, -0.0091976635, 0, -0.9999577, -4.0198317, 0.046212673, -0.07557106)
+
+[node name="GridMap" type="GridMap" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.48243785, 0)
+mesh_library = ExtResource("10_q5234")
+data = {
+"cells": PackedInt32Array(4, 11, 655402, 5, 11, 655402, 6, 11, 655402, 7, 11, 655402, 8, 11, 655402, 9, 11, 655402, 65533, 11, 655402, 65532, 11, 655402, 65531, 11, 655402, 65530, 11, 655402, 65529, 11, 655402, 65528, 9, 1048618, 65528, 8, 42, 65528, 2, 42, 65529, 65531, 42, 65530, 65531, 42, 65531, 65531, 42, 65532, 65531, 42, 65533, 65531, 42, 65534, 65531, 42, 65535, 65531, 42, 1, 65531, 655402, 2, 65531, 655402, 3, 65531, 655402, 4, 65531, 655402, 5, 65531, 655402, 6, 65531, 655402, 10, 10, 1048618, 10, 9, 1048618, 10, 8, 1048618, 10, 7, 1048618, 10, 6, 1048618, 10, 5, 1048618, 10, 4, 1048618, 10, 3, 1048618, 10, 2, 1048618, 10, 1, 1048618, 10, 0, 1048618, 10, 65535, 1048618, 10, 65534, 1048618, 10, 65533, 1048618, 4, 65530, 1048618, 10, 65531, 1048618, 65530, 65532, 1441810, 65531, 65532, 18, 65532, 65532, 18, 65533, 65532, 18, 65534, 65532, 18, 65535, 65532, 18, 0, 65532, 18, 1, 65532, 18, 2, 65532, 18, 3, 65532, 18, 4, 65532, 18, 5, 65532, 18, 6, 65532, 18, 7, 65532, 18, 8, 65532, 1441810, 65530, 65534, 1441810, 65532, 65534, 1441810, 65534, 65534, 1441810, 0, 65534, 1441810, 1, 65534, 1441810, 2, 65534, 1441810, 4, 65534, 1441810, 6, 65534, 1441810, 8, 65534, 1441810, 8, 0, 1441810, 6, 0, 1441810, 4, 0, 1441810, 2, 0, 1441810, 0, 0, 1441810, 65534, 0, 1441810, 65532, 0, 1441810, 65530, 0, 1441810, 65529, 0, 1441810, 65529, 65534, 1441810, 65529, 1, 1441810, 65530, 2, 1441810, 65532, 2, 1441810, 65534, 2, 1441810, 0, 2, 1441810, 8, 2, 1441810, 7, 2, 1441810, 6, 2, 1441810, 5, 2, 1441810, 4, 2, 1441810, 3, 2, 1441810, 2, 2, 1441810, 1, 2, 1441810, 8, 4, 1441810, 7, 4, 1441810, 6, 4, 1441810, 5, 4, 1441810, 4, 4, 1441810, 3, 4, 1441810, 2, 4, 1441810, 1, 4, 1441810, 65535, 4, 1441810, 65534, 4, 1441810, 65533, 4, 1441810, 65532, 4, 1441810, 0, 4, 1441810, 65531, 4, 1441810, 65530, 4, 1441810, 65530, 6, 1441810, 65531, 6, 1441810, 65532, 6, 1441810, 65533, 6, 1441810, 65534, 6, 1441810, 65535, 6, 1441810, 0, 6, 1441810, 1, 6, 1441810, 2, 6, 1441810, 3, 6, 1441810, 5, 6, 1441810, 6, 6, 1441810, 7, 6, 1441810, 4, 6, 1441810, 8, 6, 1441810, 9, 7, 1441810, 9, 8, 1441810, 9, 9, 1441810, 9, 10, 1441810, 8, 10, 1441810, 8, 9, 1441810, 7, 9, 1441810, 7, 10, 1441810, 6, 10, 1441810, 6, 9, 1441810, 6, 8, 1441810, 7, 8, 1441810, 7, 7, 1441810, 6, 7, 1441810, 5, 7, 1441810, 4, 7, 1441810, 6, 5, 1441810, 7, 5, 1441810, 7, 3, 1441810, 8, 3, 1441810, 7, 1, 1441810, 8, 5, 1441810, 9, 6, 1441810, 6, 3, 1441810, 5, 5, 1441810, 5, 3, 1441810, 4, 5, 1441810, 4, 3, 1441810, 3, 5, 1441810, 7, 65535, 1441810, 6, 65535, 1441810, 5, 65535, 1441810, 5, 0, 1441810, 3, 0, 1441810, 2, 1, 1441810, 1, 1, 1441810, 8, 65535, 1441810, 9, 65535, 1441810, 7, 0, 1441810, 5, 1, 1441810, 4, 1, 1441810, 3, 1, 1441810, 0, 1, 1441810, 65535, 2, 1441810, 0, 3, 1441810, 1, 3, 1441810, 2, 3, 1441810, 3, 3, 1441810, 1, 5, 1441810, 0, 5, 1441810, 2, 5, 1441810, 65534, 5, 1441810, 65533, 5, 1441810, 65534, 3, 1441810, 65535, 3, 1441810, 65535, 5, 1441810, 65532, 5, 1441810, 65532, 3, 1441810, 65532, 1, 1441810, 65532, 65535, 1441810, 65533, 65534, 1441810, 65535, 65534, 1441810, 65533, 65535, 1441810, 65534, 65535, 1441810, 65533, 0, 1441810, 65535, 0, 1441810, 65534, 1, 1441810, 65533, 1, 1441810, 65533, 2, 1441810, 65531, 2, 1441810, 65531, 3, 1441810, 65531, 5, 1441810, 65530, 5, 1441810, 65530, 3, 1441810, 65529, 2, 1441810, 65530, 1, 1441810, 65530, 65535, 1441810, 65531, 65535, 1441810, 65531, 0, 1441810, 65531, 1, 1441810, 65531, 65534, 1441810, 65532, 65533, 1441810, 65533, 65533, 1441810, 65534, 65533, 1441810, 65535, 65533, 1441810, 0, 65533, 1441810, 1, 65533, 1441810, 65535, 65535, 1441810, 0, 65535, 1441810, 1, 65535, 1441810, 2, 65535, 1441810, 3, 65535, 1441810, 3, 65534, 1441810, 3, 65533, 1441810, 2, 65533, 1441810, 4, 65533, 1441810, 5, 65533, 1441810, 6, 65533, 1441810, 7, 65533, 1441810, 8, 65533, 1441810, 6, 1, 1441810, 65529, 4, 1441810, 65529, 3, 1441810, 65529, 7, 1441810, 65530, 7, 1441810, 65531, 7, 1441810, 65532, 7, 1441810, 65533, 7, 1441810, 65530, 8, 1441810, 65529, 9, 1441810, 65530, 9, 1441810, 65529, 10, 1441810, 65530, 10, 1441810, 65531, 10, 1441810, 65531, 9, 1441810, 65531, 8, 1441810, 65532, 8, 1441810, 65532, 9, 1441810, 65532, 10, 1441810, 65533, 8, 1441810, 65534, 8, 1441810, 65534, 7, 1441810, 3, 7, 1441810, 2, 7, 1441810, 1, 7, 1441810, 0, 7, 1441810, 65535, 7, 1441810, 65535, 8, 1441810, 0, 8, 1441810, 1, 8, 1441810, 1, 9, 1441810, 2, 9, 1441810, 2, 8, 1441810, 3, 8, 1441810, 4, 8, 1441810, 4, 9, 1441810, 5, 9, 1441810, 0, 9, 1441810, 65535, 9, 1441810, 65533, 9, 1441810, 8, 8, 1441810, 8, 7, 1441810, 9, 5, 1441810, 9, 4, 1441810, 9, 3, 1441810, 9, 2, 1441810, 9, 1, 1441810, 9, 0, 1441810, 8, 65531, 1441810, 9, 65531, 1441810, 9, 65532, 1441810, 9, 65533, 1441810, 9, 65534, 1441810, 65529, 6, 1441810, 65529, 5, 1441810, 65528, 0, 1310738, 65529, 65535, 1441810, 65530, 65533, 1441810, 65529, 65533, 1441810, -327600, 65149, 1179690, -327597, 65154, 1179690, -327603, 65190, 1179690, -327601, 65193, 1179690, -327605, 65225, 1179690, -327603, 65228, 1179690, -327601, 65231, 1179690, -327598, 65234, 1179690, -327597, 65236, 1179690, -327597, 65237, 1179690, -327596, 65238, 1179690, -327595, 65239, 1179690, -327595, 65240, 1179690, -327594, 65240, 1179690, -327594, 65241, 1179690, -327593, 65241, 1179690, -327593, 65242, 1179690, -327592, 65242, 1179690, -327592, 65243, 1179690, -327591, 65244, 1179690, -327591, 65245, 1179690, -327590, 65245, 1179690, -327590, 65246, 1179690, -327589, 65246, 1179690, -327589, 65247, 1179690, -327596, 65269, 1179690, -327603, 65288, 1179690, -327608, 65304, 1179690, -327632, 65369, 1179690, -327647, 65410, 1179690, -327657, 65437, 1179690, -327660, 65445, 1179690, -327662, 65451, 1179690, -327665, 65456, 1179690, -327667, 65460, 1179690, -327668, 65464, 1179690, -327671, 65466, 1179690, -327672, 65465, 1179690, -327674, 65465, 1179690, -327675, 65463, 1179690, -327676, 65456, 1179690, -327676, 65447, 1179690, -327677, 65442, 1179690, -327677, 65434, 1179690, -327678, 65430, 1179690, -327679, 65425, 1179690, -327680, 65424, 1179690, -262145, 65422, 1179690, -262146, 65421, 1179690, -262146, 65415, 1179690, -327677, 65376, 1179690, -327667, 65310, 1179690, -327633, 65104, 1179690, -327239, 63914, 1179690, -327650, 65365, 1179690, -327656, 65384, 1179690, -327658, 65394, 1179690, -327660, 65399, 1179690, -327659, 65400, 1179690, -327658, 65402, 1179690, -327656, 65403, 1179690, -327655, 65405, 1179690, 196600, 10, 1441837, 131082, 10, 1441837, 131082, 9, 1441837, 131082, 8, 1441837, 131082, 7, 1441837, 131082, 6, 1441837, 131082, 5, 1441837, 131082, 4, 1441837, 131082, 3, 1441837, 131082, 65531, 1441837, 131082, 65532, 1441837, 131082, 65533, 1441837, 131082, 65534, 1441837, 131083, 65534, 1441837, 131083, 65535, 1441837, 131083, 0, 1441837, 131082, 0, 1441837, 131082, 1, 1441837, 131081, 11, 655405, 131080, 11, 655405, 131079, 11, 655405, 131078, 11, 655405, 131077, 11, 655405, 131076, 11, 655405, 131075, 11, 655405, 131074, 11, 655405, 131072, 11, 655405, 196606, 11, 655405, 196605, 11, 655405, 196604, 11, 655405, 196603, 11, 655405, 196602, 11, 655405, 196601, 11, 655405, 196601, 65531, 655405, 196602, 65531, 655405, 196603, 65531, 655405, 196604, 65531, 655405, 196605, 65531, 655405, 196606, 65531, 655405, 196607, 65531, 655405, 131072, 65531, 655405, 131073, 65531, 655405, 131078, 65531, 655405, 131077, 65531, 655405, 131076, 65531, 655405, 131075, 65531, 655405, 131080, 65531, 655405, 131081, 65531, 655405, 65528, 65532, 1441834, 131064, 65532, 1441834, 262136, 65532, 1441834, 262136, 65534, 1441837, 262136, 0, 1441837, 262136, 2, 1441837, 262136, 4, 1441837, 262136, 6, 1441837, 262136, 8, 1048621, 262136, 9, 1048621, 262136, 11, 1048621, 196600, 9, 1048621, 327672, 65534, 1048621, 327672, 0, 1048621, 327672, 2, 1048621, 327672, 4, 1048621, 327672, 6, 1048621, 327672, 8, 1048621, 327672, 9, 1048621, 327672, 10, 1048621, 327672, 11, 65581, 327673, 11, 65581, 327674, 11, 65581, 327676, 11, 196653, 327677, 11, 45, 327678, 11, 45, 262144, 11, 196653, 262146, 11, 196653, 262148, 11, 45, 262150, 11, 196653, 262152, 11, 45, 262153, 11, 45, 262154, 10, 1441837, 262154, 8, 1441837, 262154, 7, 983085, 262154, 6, 983085, 262154, 4, 1441837, 262154, 3, 1441837, 262154, 1, 983085, 262154, 0, 983085, 262154, 65535, 1441837, 262154, 65534, 1441837, 262154, 65533, 983085, 262153, 65531, 45, 262152, 65531, 45, 262151, 65531, 45, 262149, 65531, 589869, 262148, 65531, 589869, 262147, 65531, 45, 262146, 65531, 45, 262144, 65531, 589869, 327679, 65531, 589869, 327678, 65531, 45, 327677, 65531, 45, 327676, 65531, 589869, 327675, 65531, 589869, 327674, 65531, 589869, 327673, 65531, 589869, 327672, 65531, 589869, 327671, 65531, 45, 327670, 65531, 45, 262145, 65531, 589869, 262150, 65531, 589869, 262154, 65531, 720941, 262154, 65532, 983085, 262154, 2, 983085, 262154, 5, 983085, 262154, 11, 983085, 262151, 11, 196653, 262149, 11, 196653, 262145, 11, 196653, 327679, 11, 196653, 327675, 11, 45, 327671, 11, 65581, 65539, 11, 196653, 65540, 11, 196653, 65541, 11, 196653, 65542, 11, 131117, 65543, 11, 131117, 65545, 11, 131117)
+}
+metadata/_editor_floor_ = Vector3(0, -6, 0)
+
+[node name="MurCollission" type="Area3D" parent="GridMap"]
+
+[node name="MurGG" type="CollisionShape3D" parent="GridMap/MurCollission"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.488394, 6.106369, 23.112495)
+shape = SubResource("BoxShape3D_3rc1a")
+
+[node name="MURGD" type="CollisionShape3D" parent="GridMap/MurCollission"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4893064, 8.069825, 22.978102)
+shape = SubResource("BoxShape3D_3rc1a")
+
+[node name="MurGG2" type="CollisionShape3D" parent="GridMap/MurCollission"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15870476, 5.112364, -9.034401)
+shape = SubResource("BoxShape3D_3rc1a")
+
+[node name="MurGG3" type="CollisionShape3D" parent="GridMap/MurCollission"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -14.934946, 8.328542, 6.6139865)
+shape = SubResource("BoxShape3D_3rc1a")
+
+[node name="MurGG4" type="CollisionShape3D" parent="GridMap/MurCollission"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 20.70776, 4.804433, 7.0292206)
+shape = SubResource("BoxShape3D_3rc1a")
+
+[node name="portail" parent="." instance=ExtResource("11_27fww")]
+transform = Transform3D(0.012303076, 0, -0.46983895, 0, 0.47, 0, 0.46983895, 0, 0.012303076, -14.727995, 0.5774188, 5.9318466)
+
+[node name="Garage" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.47893953, 0)
+physics_material_override = SubResource("PhysicsMaterial_mjmn4")
+
+[node name="Player" parent="Garage" instance=ExtResource("1_mjmn4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.374599, 1.5486856, 5.551824)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Garage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4930613, 0)
+mesh = SubResource("BoxMesh_rao6x")
+skeleton = NodePath("")
+
+[node name="CollisionSol" type="CollisionShape3D" parent="Garage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54213905, 0)
+shape = SubResource("BoxShape3D_r13b6")
+
+[node name="toyCar" parent="Garage" instance=ExtResource("8_62wir")]
+transform = Transform3D(0.010569421, 0, -0.7999302, 0, 0.8, 0, 0.7999302, 0, 0.010569421, 6.978739, 1.4334855, 29.175062)
+
+[node name="muscleCar" parent="Garage" instance=ExtResource("3_mjmn4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.538452, 1.4193122, 29.1275)
+
+[node name="CAR_01" parent="Garage" instance=ExtResource("4_bvirc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08582437, 1.516391, 30.15951)
+
+[node name="LowPolyCar" parent="Garage" instance=ExtResource("5_vkf0m")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3.3651464, 1.4262103, 28.67396)
+
+[node name="zoneRepar1" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.1767998)
+script = ExtResource("13_323rg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="zoneRepar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05895996, 1.1300564, 0.0058288574)
+shape = SubResource("BoxShape3D_hmexc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="zoneRepar1"]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 7, 0, 0.65, 0)
+mesh = SubResource("BoxMesh_oilq0")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="Pilone1" parent="zoneRepar1" instance=ExtResource("18_3rc1a")]
+transform = Transform3D(0.052155785, 0, -1.3990282, 0, 1.4, 0, 1.3990282, 0, 0.052155785, 0, 1.2774534, 0.33721828)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="zoneRepar1/Pilone1"]
+physics_material_override = SubResource("PhysicsMaterial_3rc1a")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="zoneRepar1/Pilone1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8247495, 1.6550293, 0.0710814)
+shape = SubResource("BoxShape3D_lxmlm")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="zoneRepar1/Pilone1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8157067, 1.896482, -0.06158012)
+shape = SubResource("BoxShape3D_lxmlm")
+
+[node name="zoneRepar2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.263966)
+script = ExtResource("15_lxmlm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="zoneRepar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05895996, 1.1256495, -4.7155046)
+shape = SubResource("BoxShape3D_hmexc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="zoneRepar2"]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 7, 0, 0.65, -3.4879084)
+mesh = SubResource("BoxMesh_oilq0")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="Pilone2" parent="zoneRepar2" instance=ExtResource("18_3rc1a")]
+transform = Transform3D(-0.10740656, 0, -1.3958738, 0, 1.4, 0, 1.3958738, 0, -0.10740656, 0, 1.1718984, -3.4919362)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="zoneRepar2/Pilone2"]
+transform = Transform3D(0.99350256, 0, 0.11381006, 0, 1, 0, -0.11381006, 0, 0.99350256, 0.06256175, 0.07539648, -0.0048139542)
+physics_material_override = SubResource("PhysicsMaterial_3rc1a")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="zoneRepar2/Pilone2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8247495, 1.6550293, 0.0710814)
+shape = SubResource("BoxShape3D_lxmlm")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="zoneRepar2/Pilone2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8157067, 1.896482, -0.06158012)
+shape = SubResource("BoxShape3D_lxmlm")
+
+[node name="GarageManager" type="Node" parent="." node_paths=PackedStringArray("payment_zone_node")]
+script = ExtResource("14_owb88")
+car_scene = ExtResource("15_323rg")
+payment_zone_node = NodePath("../payment")
+
+[node name="zoneRepar3" type="Area3D" parent="."]
+transform = Transform3D(1, 0, -3.7252903e-09, 0, 1, 0, 3.7252903e-09, 0, 1, -4.8428774e-08, 0, 16.05055)
+script = ExtResource("18_ye0yu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="zoneRepar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05895996, 1.1256495, 0.0058288574)
+shape = SubResource("BoxShape3D_hmexc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="zoneRepar3"]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 7, 0, 0.65, 0)
+mesh = SubResource("BoxMesh_oilq0")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="Pilone3" parent="zoneRepar3" instance=ExtResource("18_3rc1a")]
+transform = Transform3D(-0.10740656, 0, -1.3958738, 0, 1.4, 0, 1.3958738, 0, -0.10740656, 4.954123e-08, 1.1718984, -0.0321455)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="zoneRepar3/Pilone3"]
+transform = Transform3D(0.99350256, 0, 0.11381006, 0, 1, 0, -0.11381006, 0, 0.99350256, 0.06256175, 0.07539648, -0.0048139542)
+physics_material_override = SubResource("PhysicsMaterial_3rc1a")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="zoneRepar3/Pilone3/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8247495, 1.6550293, 0.0710814)
+shape = SubResource("BoxShape3D_lxmlm")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="zoneRepar3/Pilone3/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8157067, 1.896482, -0.06158012)
+shape = SubResource("BoxShape3D_lxmlm")
+
+[node name="payment" type="Area3D" parent="."]
+transform = Transform3D(-0.049512204, 0, 0.9987735, 0, 1, 0, -0.9987735, 0, -0.049512204, 16.554226, 0, -3.5830386)
+script = ExtResource("16_323rg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="payment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05895996, 0.6590862, 0.0058288574)
+shape = SubResource("BoxShape3D_hmexc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="payment"]
+transform = Transform3D(9.993822, 0, -0.24600585, 0, 1, 0, 0.3514369, 0, 6.995676, -0.036529034, 0.65, 1.0387772)
+mesh = SubResource("BoxMesh_oilq0")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="Table" parent="." instance=ExtResource("19_7wmav")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.7618, 1.0636168, -7.533849)
+
+[node name="Sketchfab_Scene" parent="." instance=ExtResource("20_rqdlc")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 13.753999, 1.0693911, 8.635387)

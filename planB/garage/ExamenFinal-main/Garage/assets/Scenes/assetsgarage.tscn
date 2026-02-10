@@ -1,0 +1,292 @@
+[gd_scene load_steps=73 format=3 uid="uid://dhr5jpclheatf"]
+
+[ext_resource type="PackedScene" uid="uid://coidq3siqouf3" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Barrel_A.gltf" id="1_giq82"]
+[ext_resource type="PackedScene" uid="uid://s56064vidxh0" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Barrel_B.gltf" id="2_53lym"]
+[ext_resource type="PackedScene" uid="uid://cpydrcoms07lq" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Barrel_C.gltf" id="3_gsrrg"]
+[ext_resource type="PackedScene" uid="uid://dx6tbbvdfrujs" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Box_A.gltf" id="4_2vm3f"]
+[ext_resource type="PackedScene" uid="uid://cd2ceaijhuorl" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Box_B.gltf" id="5_belsu"]
+[ext_resource type="PackedScene" uid="uid://ct66plrlkb36e" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Box_C.gltf" id="6_em86r"]
+[ext_resource type="PackedScene" uid="uid://duyr1qff7iv7c" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Can_A.gltf" id="7_u1ses"]
+[ext_resource type="PackedScene" uid="uid://c1n3y6hic47xm" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Can_B.gltf" id="8_4hmfs"]
+[ext_resource type="PackedScene" uid="uid://b3rk215loc07l" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Coin_A.gltf" id="9_x0jxu"]
+[ext_resource type="PackedScene" uid="uid://bnm3fajytab4k" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Coin_B.gltf" id="10_6gi73"]
+[ext_resource type="PackedScene" uid="uid://bkcuqmafybn2t" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Coin_C.gltf" id="11_x47vd"]
+[ext_resource type="PackedScene" uid="uid://banxvitjjm2y" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Cube_Prototype_Large_A.gltf" id="12_b8xwu"]
+[ext_resource type="PackedScene" uid="uid://byw2am07i7wgw" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Cube_Prototype_Large_B.gltf" id="13_xk8dr"]
+[ext_resource type="PackedScene" uid="uid://bvd5p22kyue8m" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Cube_Prototype_Small.gltf" id="14_xj1vx"]
+[ext_resource type="PackedScene" uid="uid://52f3yjtxy8in" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Door_A.gltf" id="15_s05di"]
+[ext_resource type="PackedScene" uid="uid://djq8gl34vphw1" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Door_A_Decorated.gltf" id="16_kiswj"]
+[ext_resource type="PackedScene" uid="uid://c6dkqs4dbcl4s" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Door_B.gltf" id="17_6l68a"]
+[ext_resource type="PackedScene" uid="uid://ccijiv1vl0dl5" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Dummy_Base.gltf" id="18_ueun5"]
+[ext_resource type="PackedScene" uid="uid://do16hj473dx6r" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Floor.gltf" id="19_1esw4"]
+[ext_resource type="PackedScene" uid="uid://d03xcm0uayx53" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Floor_Dirt.gltf" id="20_81yk7"]
+[ext_resource type="PackedScene" uid="uid://clqf8b01fxus3" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Floor_Prototype.gltf" id="21_o5c8u"]
+[ext_resource type="PackedScene" uid="uid://dfus1yt21f7p4" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Pallet_Large.gltf" id="22_dc35b"]
+[ext_resource type="PackedScene" uid="uid://dtis0msn8p37a" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Pallet_Small.gltf" id="23_ny30h"]
+[ext_resource type="PackedScene" uid="uid://c6svuxjy2cqdn" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Pallet_Small_Decorated_A.gltf" id="24_kjwk3"]
+[ext_resource type="PackedScene" uid="uid://br16f05gveivb" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Pallet_Small_Decorated_B.gltf" id="25_a55yf"]
+[ext_resource type="PackedScene" uid="uid://drtrey33028o7" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Pillar_A.gltf" id="26_dak21"]
+[ext_resource type="PackedScene" uid="uid://d3ax1dle1wjif" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Pillar_B.gltf" id="27_o8vr1"]
+[ext_resource type="PackedScene" uid="uid://c1fssl1y2whoj" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Beam.gltf" id="28_o21kj"]
+[ext_resource type="PackedScene" uid="uid://d3euk4h3efyrp" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Cube.gltf" id="29_6rd52"]
+[ext_resource type="PackedScene" uid="uid://bdgovtw21a7i0" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Cube_Small.gltf" id="30_vxikr"]
+[ext_resource type="PackedScene" uid="uid://srvmgxj1ahge" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Doorway.gltf" id="31_jbpoj"]
+[ext_resource type="PackedScene" uid="uid://duersa7y4mmpd" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Floor.gltf" id="32_vm562"]
+[ext_resource type="PackedScene" uid="uid://ifd7n5tx8b8u" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Floor_Hole.gltf" id="33_fksdw"]
+[ext_resource type="PackedScene" uid="uid://csn5ptqx0lnni" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Pillar.gltf" id="34_6sjla"]
+[ext_resource type="PackedScene" uid="uid://dffix3u45i06j" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Slope.gltf" id="35_dvbkv"]
+[ext_resource type="PackedScene" uid="uid://b4nb8dsqyexuw" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Slope_Half.gltf" id="36_6b3yp"]
+[ext_resource type="PackedScene" uid="uid://c7s3uwi76ad4s" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Slope_Half_InnerCorner.gltf" id="37_w2hur"]
+[ext_resource type="PackedScene" uid="uid://e3rlarvwui75" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Slope_Half_OuterCorner.gltf" id="38_7dmpt"]
+[ext_resource type="PackedScene" uid="uid://nbigrvt0kj6d" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Slope_InnerCorner.gltf" id="39_evx6k"]
+[ext_resource type="PackedScene" uid="uid://c64fj0kp6y34d" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Slope_OuterCorner.gltf" id="40_anlry"]
+[ext_resource type="PackedScene" uid="uid://ibonmmxrhsrc" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Stairs.gltf" id="41_4qvsr"]
+[ext_resource type="PackedScene" uid="uid://b0kajnnr4ihr" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Stairs_Half.gltf" id="42_qtk36"]
+[ext_resource type="PackedScene" uid="uid://b4ako86evmow4" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Wall.gltf" id="43_6jg54"]
+[ext_resource type="PackedScene" uid="uid://xgsxgam7bhuu" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Wall_Half.gltf" id="44_k7cyh"]
+[ext_resource type="PackedScene" uid="uid://cd40ypg1xully" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Wall_OpenCorner.gltf" id="45_28alq"]
+[ext_resource type="PackedScene" uid="uid://brrdjf3yuqqv4" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Wall_Short.gltf" id="46_v6mgm"]
+[ext_resource type="PackedScene" uid="uid://jtsv3v2wkmfb" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Wall_Slope.gltf" id="47_a75qi"]
+[ext_resource type="PackedScene" uid="uid://c873iksxc2dg3" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Primitive_Window.gltf" id="48_vy2w3"]
+[ext_resource type="PackedScene" uid="uid://b8u0feyqslu0q" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/table_medium.gltf" id="49_tucxr"]
+[ext_resource type="PackedScene" uid="uid://qmfs0rwyqqx2" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/table_medium_Decorated.gltf" id="50_2l1ai"]
+[ext_resource type="PackedScene" uid="uid://dvj31cmbh0yx1" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/table_medium_long.gltf" id="51_blqnq"]
+[ext_resource type="PackedScene" uid="uid://200elwimfjul" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target.gltf" id="52_syd0j"]
+[ext_resource type="PackedScene" uid="uid://b7tn266ac4yad" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_pieces_A.gltf" id="53_2qxcj"]
+[ext_resource type="PackedScene" uid="uid://ckdg83sw2eoei" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_pieces_B.gltf" id="54_0wi2w"]
+[ext_resource type="PackedScene" uid="uid://c01qfqrbw42uy" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_pieces_C.gltf" id="55_b01wl"]
+[ext_resource type="PackedScene" uid="uid://byt4utmx63qc1" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_pieces_D.gltf" id="56_me6fy"]
+[ext_resource type="PackedScene" uid="uid://s7sd4ybao7ku" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_pieces_E.gltf" id="57_p243g"]
+[ext_resource type="PackedScene" uid="uid://cc273gvgx7ipc" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_pieces_F.gltf" id="58_fb5ue"]
+[ext_resource type="PackedScene" uid="uid://clewiho4bdsys" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_small.gltf" id="59_gevd0"]
+[ext_resource type="PackedScene" uid="uid://c7g8kltn0bcgj" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_stand_A.gltf" id="60_br53a"]
+[ext_resource type="PackedScene" uid="uid://bjjoka5srhjjd" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_stand_A_Decorated.gltf" id="61_fm2rc"]
+[ext_resource type="PackedScene" uid="uid://667o1m6wc53" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_stand_B.gltf" id="62_x4wp0"]
+[ext_resource type="PackedScene" uid="uid://cxjh5s3l3lidt" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_wall_large_A.gltf" id="63_0a67c"]
+[ext_resource type="PackedScene" uid="uid://cke7yvrevyk46" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_wall_large_B.gltf" id="64_4xjqg"]
+[ext_resource type="PackedScene" uid="uid://cvj6lqulgexkr" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/target_wall_small.gltf" id="65_b3ajw"]
+[ext_resource type="PackedScene" uid="uid://bpu4j1qk8t5d1" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall.gltf" id="66_w4mcq"]
+[ext_resource type="PackedScene" uid="uid://cxexjgpkfyhyv" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall_Decorated.gltf" id="67_52tj7"]
+[ext_resource type="PackedScene" uid="uid://c0y6sis07eeo3" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall_Doorway.gltf" id="68_3ecvn"]
+[ext_resource type="PackedScene" uid="uid://cm8ui2rcns124" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall_Half.gltf" id="69_f8ot1"]
+[ext_resource type="PackedScene" uid="uid://cnn6yjbtxrhe4" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall_Target.gltf" id="70_3oifa"]
+[ext_resource type="PackedScene" uid="uid://dd6ad3x6wktwh" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall_Window_Closed.gltf" id="71_6j2qr"]
+[ext_resource type="PackedScene" uid="uid://bgftsvjcn5sme" path="res://assets/Garage/KayKit_Prototype_Bits_1.1_FREE/KayKit_Prototype_Bits_1.1_FREE/Assets/gltf/Wall_Window_Open.gltf" id="72_822sy"]
+
+[node name="Garage" type="Node3D"]
+
+[node name="Barrel_A2" parent="." instance=ExtResource("1_giq82")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Barrel_B2" parent="." instance=ExtResource("2_53lym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Barrel_C2" parent="." instance=ExtResource("3_gsrrg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Box_A2" parent="." instance=ExtResource("4_2vm3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Box_B2" parent="." instance=ExtResource("5_belsu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Box_C2" parent="." instance=ExtResource("6_em86r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Can_A2" parent="." instance=ExtResource("7_u1ses")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Can_B2" parent="." instance=ExtResource("8_4hmfs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Coin_A2" parent="." instance=ExtResource("9_x0jxu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Coin_B2" parent="." instance=ExtResource("10_6gi73")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Coin_C2" parent="." instance=ExtResource("11_x47vd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Cube_Prototype_Large_A2" parent="." instance=ExtResource("12_b8xwu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Cube_Prototype_Large_B2" parent="." instance=ExtResource("13_xk8dr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Cube_Prototype_Small2" parent="." instance=ExtResource("14_xj1vx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Door_A2" parent="." instance=ExtResource("15_s05di")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Door_A_Decorated2" parent="." instance=ExtResource("16_kiswj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Door_B2" parent="." instance=ExtResource("17_6l68a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Dummy_Base2" parent="." instance=ExtResource("18_ueun5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Floor2" parent="." instance=ExtResource("19_1esw4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Floor_Dirt2" parent="." instance=ExtResource("20_81yk7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Floor_Prototype2" parent="." instance=ExtResource("21_o5c8u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Pallet_Large2" parent="." instance=ExtResource("22_dc35b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Pallet_Small2" parent="." instance=ExtResource("23_ny30h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Pallet_Small_Decorated_A2" parent="." instance=ExtResource("24_kjwk3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Pallet_Small_Decorated_B2" parent="." instance=ExtResource("25_a55yf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Pillar_A2" parent="." instance=ExtResource("26_dak21")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Pillar_B2" parent="." instance=ExtResource("27_o8vr1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Beam2" parent="." instance=ExtResource("28_o21kj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Cube2" parent="." instance=ExtResource("29_6rd52")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Cube_Small2" parent="." instance=ExtResource("30_vxikr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Doorway2" parent="." instance=ExtResource("31_jbpoj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Floor2" parent="." instance=ExtResource("32_vm562")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Floor_Hole2" parent="." instance=ExtResource("33_fksdw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Pillar2" parent="." instance=ExtResource("34_6sjla")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Slope2" parent="." instance=ExtResource("35_dvbkv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Slope_Half2" parent="." instance=ExtResource("36_6b3yp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Slope_Half_InnerCorner2" parent="." instance=ExtResource("37_w2hur")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Slope_Half_OuterCorner2" parent="." instance=ExtResource("38_7dmpt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Slope_InnerCorner2" parent="." instance=ExtResource("39_evx6k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Slope_OuterCorner2" parent="." instance=ExtResource("40_anlry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Stairs2" parent="." instance=ExtResource("41_4qvsr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Stairs_Half2" parent="." instance=ExtResource("42_qtk36")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Wall2" parent="." instance=ExtResource("43_6jg54")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Wall_Half2" parent="." instance=ExtResource("44_k7cyh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Wall_OpenCorner2" parent="." instance=ExtResource("45_28alq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Wall_Short2" parent="." instance=ExtResource("46_v6mgm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Wall_Slope2" parent="." instance=ExtResource("47_a75qi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Primitive_Window2" parent="." instance=ExtResource("48_vy2w3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="table_medium2" parent="." instance=ExtResource("49_tucxr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="table_medium_Decorated2" parent="." instance=ExtResource("50_2l1ai")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="table_medium_long2" parent="." instance=ExtResource("51_blqnq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target2" parent="." instance=ExtResource("52_syd0j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_pieces_A2" parent="." instance=ExtResource("53_2qxcj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_pieces_B2" parent="." instance=ExtResource("54_0wi2w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_pieces_C2" parent="." instance=ExtResource("55_b01wl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_pieces_D2" parent="." instance=ExtResource("56_me6fy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_pieces_E2" parent="." instance=ExtResource("57_p243g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_pieces_F2" parent="." instance=ExtResource("58_fb5ue")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_small2" parent="." instance=ExtResource("59_gevd0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_stand_A2" parent="." instance=ExtResource("60_br53a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_stand_A_Decorated2" parent="." instance=ExtResource("61_fm2rc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_stand_B2" parent="." instance=ExtResource("62_x4wp0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_wall_large_A2" parent="." instance=ExtResource("63_0a67c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_wall_large_B2" parent="." instance=ExtResource("64_4xjqg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="target_wall_small2" parent="." instance=ExtResource("65_b3ajw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall2" parent="." instance=ExtResource("66_w4mcq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall_Decorated2" parent="." instance=ExtResource("67_52tj7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall_Doorway2" parent="." instance=ExtResource("68_3ecvn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall_Half2" parent="." instance=ExtResource("69_f8ot1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall_Target2" parent="." instance=ExtResource("70_3oifa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall_Window_Closed2" parent="." instance=ExtResource("71_6j2qr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)
+
+[node name="Wall_Window_Open2" parent="." instance=ExtResource("72_822sy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13584948, 0, 0.2324866)

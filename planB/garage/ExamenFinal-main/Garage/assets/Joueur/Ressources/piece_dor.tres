@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://3of8wi0ahaxq"]
+
+[ext_resource type="Script" uid="uid://bewiv5ciy610m" path="res://assets/Scripts/ItemData.gd" id="1_jpu3e"]
+[ext_resource type="Texture2D" uid="uid://bxqen86t8qtat" path="res://assets/player/model/pieceee.jpg" id="1_qxjf5"]
+
+[resource]
+script = ExtResource("1_jpu3e")
+name = "Pièce d'Ariary"
+description = "Piece valant 20.000 Ar utilisable dans le jeu. "
+icon = ExtResource("1_qxjf5")
+metadata/_custom_type_script = "uid://bewiv5ciy610m"

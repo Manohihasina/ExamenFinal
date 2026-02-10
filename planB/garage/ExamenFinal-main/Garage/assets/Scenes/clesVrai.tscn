@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://77f7uu7bgcce"]
+
+[ext_resource type="Script" uid="uid://cnavkl0t48fb1" path="res://assets/Scripts/cles.gd" id="1_o0yfb"]
+[ext_resource type="PlaneMesh" uid="uid://drower2q1nw0t" path="res://assets/Images/area_3d.tres" id="2_o0yfb"]
+[ext_resource type="Resource" uid="uid://cdblygugofgu6" path="res://assets/Joueur/Ressources/clesVoiture.tres" id="2_pcrux"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pcrux"]
+size = Vector3(2.3522644, 0.4975586, 2.3340454)
+
+[node name="Cles" type="Area3D"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+script = ExtResource("1_o0yfb")
+item_data = ExtResource("2_pcrux")
+metadata/_custom_type_script = "uid://d4ailarrwoeop"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16845798, 0)
+mesh = ExtResource("2_o0yfb")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0034811087, 0.013679862, -0.19104719)
+shape = SubResource("BoxShape3D_pcrux")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

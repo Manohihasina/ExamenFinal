@@ -1,0 +1,14 @@
+[gd_resource type="PlaneMesh" load_steps=3 format=3 uid="uid://dskbkuwhoj2t0"]
+
+[ext_resource type="Texture2D" uid="uid://e8mcnh2w1dl" path="res://assets/Images/cles.png" id="1_5ipxr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_488sk"]
+render_priority = 12
+transparency = 1
+blend_mode = 1
+cull_mode = 1
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_5ipxr")
+
+[resource]
+material = SubResource("StandardMaterial3D_488sk")

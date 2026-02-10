@@ -1,0 +1,85 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctx24w72xkcl8"]
+
+[ext_resource type="Script" uid="uid://cswxfui2j5p58" path="res://assets/Scripts/menu.gd" id="1_7vrkn"]
+[ext_resource type="Texture2D" uid="uid://cgk01gldjfq2m" path="res://assets/IllusLoadTorque (3).png" id="2_7vrkn"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fu7sn"]
+texture = ExtResource("2_7vrkn")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhts7"]
+bg_color = Color(3.867, 3.740427, 3.8653882, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_size = 2
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7vrkn")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_bottom = 0.001
+offset_top = 1.0
+offset_right = 1920.0
+offset_bottom = 1079.92
+theme_override_styles/panel = SubResource("StyleBoxTexture_fu7sn")
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -182.5
+offset_top = -435.0
+offset_right = 198.5
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 33
+alignment = 1
+
+[node name="Start" type="Button" parent="ButtonsContainer"]
+layout_mode = 2
+size_flags_vertical = 7
+size_flags_stretch_ratio = 0.56
+theme_override_colors/font_color = Color(0.099271886, 0.22087267, 0.14615896, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.09163072, 0.25064167, 0.43520662, 1)
+theme_override_constants/h_separation = 4
+theme_override_constants/align_to_largest_stylebox = 0
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+text = "Start Game"
+
+[node name="Options" type="Button" parent="ButtonsContainer"]
+layout_mode = 2
+size_flags_vertical = 7
+size_flags_stretch_ratio = 0.56
+theme_override_colors/font_color = Color(0.101960786, 0.22352941, 0.14901961, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.07198218, 0.21062687, 0.37143633, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+text = "Options"
+
+[node name="Exit" type="Button" parent="ButtonsContainer"]
+layout_mode = 2
+size_flags_vertical = 7
+size_flags_stretch_ratio = 0.56
+theme_override_colors/font_color = Color(0.101960786, 0.22352941, 0.14901961, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.05795589, 0.18169919, 0.3251736, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_rhts7")
+text = "Exit"
+
+[connection signal="pressed" from="ButtonsContainer/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="ButtonsContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="ButtonsContainer/Exit" to="." method="_on_exit_pressed"]

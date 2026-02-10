@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="InventoryData" load_steps=8 format=3 uid="uid://ct3pnh5vmgoen"]
+
+[ext_resource type="Script" uid="uid://8csyljxrvfqv" path="res://assets/Scripts/InventoryData.gd" id="1_yxbg7"]
+[ext_resource type="Script" uid="uid://7quokwfk86y7" path="res://assets/Scripts/InvetorySlot.gd" id="2_d6p47"]
+
+[sub_resource type="Resource" id="Resource_yxbg7"]
+script = ExtResource("2_d6p47")
+metadata/_custom_type_script = "uid://7quokwfk86y7"
+
+[sub_resource type="Resource" id="Resource_d6p47"]
+script = ExtResource("2_d6p47")
+metadata/_custom_type_script = "uid://7quokwfk86y7"
+
+[sub_resource type="Resource" id="Resource_borey"]
+script = ExtResource("2_d6p47")
+metadata/_custom_type_script = "uid://7quokwfk86y7"
+
+[sub_resource type="Resource" id="Resource_cunto"]
+script = ExtResource("2_d6p47")
+metadata/_custom_type_script = "uid://7quokwfk86y7"
+
+[sub_resource type="Resource" id="Resource_xvrdi"]
+script = ExtResource("2_d6p47")
+metadata/_custom_type_script = "uid://7quokwfk86y7"
+
+[resource]
+script = ExtResource("1_yxbg7")
+slots = Array[ExtResource("2_d6p47")]([SubResource("Resource_yxbg7"), SubResource("Resource_d6p47"), SubResource("Resource_borey"), SubResource("Resource_cunto"), SubResource("Resource_xvrdi")])
+metadata/_custom_type_script = "uid://8csyljxrvfqv"

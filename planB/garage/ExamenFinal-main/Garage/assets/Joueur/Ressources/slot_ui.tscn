@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://dc61sibggu8dc"]
+
+[ext_resource type="Script" uid="uid://v5bs5ee8t5iw" path="res://assets/Scripts/SlotUI.gd" id="1_k5wlw"]
+[ext_resource type="Texture2D" uid="uid://bru7npj40dbv1" path="res://icon.svg" id="2_ivx5n"]
+
+[sub_resource type="SystemFont" id="SystemFont_ivx5n"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_flv4f"]
+font = SubResource("SystemFont_ivx5n")
+font_size = 100
+
+[node name="SlotUI" type="Control"]
+custom_minimum_size = Vector2(100, 100)
+layout_direction = 2
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 1.5580001
+offset_left = 635.0
+offset_top = 380.0
+offset_right = 730.0
+offset_bottom = 189.35986
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k5wlw")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 328.0
+offset_top = 99.0
+offset_right = -360.0
+offset_bottom = -729.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_ivx5n")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 640.0
+offset_top = 845.0
+offset_right = 640.0
+offset_bottom = 845.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Nom de l'objet
+"
+label_settings = SubResource("LabelSettings_flv4f")

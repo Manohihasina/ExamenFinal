@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://08irbo4afhf3"]
+
+[ext_resource type="Texture2D" uid="uid://e8mcnh2w1dl" path="res://assets/Images/cles.png" id="1_hp4a8"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02fpl"]
+albedo_texture = ExtResource("1_hp4a8")
+albedo_texture_force_srgb = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_488sk"]
+render_priority = 12
+transparency = 1
+blend_mode = 1
+cull_mode = 1
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_hp4a8")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0csfy"]
+material = SubResource("StandardMaterial3D_488sk")
+
+[node name="Area3D" type="Area3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.3890941)
+material_override = SubResource("StandardMaterial3D_02fpl")
+mesh = SubResource("PlaneMesh_0csfy")

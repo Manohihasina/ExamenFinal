@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://qbxm5gy2hqto"]
+
+[ext_resource type="PackedScene" uid="uid://c1vw6qih5slgp" path="res://assets/Voiture/toyCar.glb" id="1_4w8l6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_au5ck"]
+
+[node name="toyCar" instance=ExtResource("1_4w8l6")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="1"]
+shape = SubResource("BoxShape3D_au5ck")

@@ -1,0 +1,27 @@
+
+func _charger_taches_pour_voiture(car_id: String):
+	if not game_server:
+		return
+
+	# Récupérer les tâches de réparation depuis Firebase
+	taches_a_reparer = game_server.obtenir_reparations_voiture(car_id)
+	print("(Serveur) Tâches trouvées pour voiture ", car_id, ": ", taches_a_reparer.size())
+	
+	# Filtrer uniquement les tâches non terminées
+	taches_a_reparer = taches_a_reparer.filter(func(t): return t.status != "completed")
+	
+	if taches_a_reparer.size() > 0:
+		peut_reparer_localement = true
+		tache_courante_index = 0
+		_afficher_liste_taches()
+		
+		if joueur_present:
+			_update_status_message()
+	else:
+		peut_reparer_localement = false
+		if taches_a_reparer.is_empty():
+			_afficher_message("Aucune tâche trouvée (Vérifiez Firebase/Admin)", Color.ORANGE)
+		else:
+			_afficher_message("Toutes réparations terminées", Color.GREEN)
+	
+	_update_apparence()

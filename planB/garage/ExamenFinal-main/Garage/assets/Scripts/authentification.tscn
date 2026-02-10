@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://btvwqk6gu41qa"]
+
+[ext_resource type="Script" uid="uid://cuyvodteym0vi" path="res://authentification.gd" id="1_6p4kw"]
+
+[node name="Authentification" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6p4kw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = -81.5
+offset_right = 270.0
+offset_bottom = 278.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ecran de connexion"
+
+[node name="Email" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Email"
+
+[node name="MDP" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Password"
+
+[node name="LogIn" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Log In"
+
+[node name="SignUp" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Sign Up
+"
+
+[connection signal="pressed" from="VBoxContainer/LogIn" to="." method="_on_log_in_pressed"]
+[connection signal="pressed" from="VBoxContainer/SignUp" to="." method="_on_signup_pressed"]
