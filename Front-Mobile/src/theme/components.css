@@ -1,0 +1,540 @@
+/* Car Wash App - Service Cards & Components */
+
+/* Service Card Styles */
+.service-card {
+  background: var(--car-wash-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  position: relative;
+  margin: var(--spacing-md);
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.service-card-header {
+  background: var(--gradient-primary);
+  padding: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+}
+
+.service-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+  backdrop-filter: blur(10px);
+}
+
+.service-icon ion-icon {
+  font-size: 2rem;
+  color: var(--car-wash-white);
+}
+
+.service-title {
+  color: var(--car-wash-white);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.service-duration {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.service-duration ion-icon {
+  font-size: 1rem;
+}
+
+.service-card-content {
+  padding: var(--spacing-lg);
+}
+
+.service-description {
+  color: var(--ion-color-medium);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-lg);
+}
+
+.service-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.service-features li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  color: var(--car-wash-dark);
+  font-size: 0.9rem;
+}
+
+.service-features ion-icon {
+  color: var(--car-wash-accent);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.service-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--car-wash-light);
+  border-top: 1px solid var(--ion-card-border-color);
+}
+
+.service-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-amount {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--car-wash-primary);
+  margin: 0;
+}
+
+.price-label {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.service-button {
+  --background: var(--gradient-primary);
+  --border-radius: var(--border-radius-md);
+  --padding-top: var(--spacing-sm);
+  --padding-bottom: var(--spacing-sm);
+  --padding-start: var(--spacing-lg);
+  --padding-end: var(--spacing-lg);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-car-wash);
+  transition: all var(--transition-normal);
+}
+
+.service-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -5px rgba(220, 38, 38, 0.25);
+}
+
+/* Booking Card Styles */
+.booking-card {
+  background: var(--car-wash-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin: var(--spacing-md);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.booking-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.booking-header {
+  padding: var(--spacing-lg);
+  background: var(--gradient-card);
+  border-bottom: 1px solid var(--ion-card-border-color);
+}
+
+.booking-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-full);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-md);
+}
+
+.booking-status.status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--car-wash-warning);
+}
+
+.booking-status.status-confirmed {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--car-wash-accent);
+}
+
+.booking-status.status-completed {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--ion-color-medium);
+}
+
+.booking-status.status-cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--car-wash-danger);
+}
+
+.booking-title {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--car-wash-dark);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.booking-date {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.booking-date ion-icon {
+  font-size: 1rem;
+}
+
+.booking-content {
+  padding: var(--spacing-lg);
+}
+
+.booking-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.info-label {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 0.95rem;
+  color: var(--car-wash-dark);
+  font-weight: var(--font-weight-medium);
+}
+
+.booking-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--ion-card-border-color);
+}
+
+.booking-action-button {
+  flex: 1;
+  --padding-top: var(--spacing-sm);
+  --padding-bottom: var(--spacing-sm);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.booking-action-button.primary {
+  --background: var(--gradient-primary);
+  --color: var(--car-wash-white);
+}
+
+.booking-action-button.secondary {
+  --background: var(--car-wash-light);
+  --color: var(--car-wash-dark);
+  --border-color: var(--ion-card-border-color);
+  --border-width: 1px;
+}
+
+/* Vehicle Card Styles */
+.vehicle-card {
+  background: var(--car-wash-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin: var(--spacing-md);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.vehicle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.vehicle-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  background: var(--car-wash-light);
+}
+
+.vehicle-content {
+  padding: var(--spacing-lg);
+}
+
+.vehicle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.vehicle-name {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--car-wash-dark);
+  margin: 0;
+}
+
+.vehicle-type {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--car-wash-light);
+  color: var(--ion-color-medium);
+  border-radius: var(--border-radius-full);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.vehicle-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.vehicle-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.vehicle-detail ion-icon {
+  font-size: 1rem;
+  color: var(--car-wash-primary);
+}
+
+.vehicle-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.vehicle-action-button {
+  flex: 1;
+  --padding-top: var(--spacing-sm);
+  --padding-bottom: var(--spacing-sm);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Price Badge */
+.price-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: var(--gradient-primary);
+  color: var(--car-wash-white);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-full);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-car-wash);
+  z-index: 1;
+}
+
+/* Rating Component */
+.rating-component {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.rating-stars {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.rating-star {
+  font-size: 1.2rem;
+  color: var(--car-wash-light);
+  transition: color var(--transition-fast);
+}
+
+.rating-star.filled {
+  color: var(--car-wash-warning);
+}
+
+.rating-value {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Progress Steps */
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--car-wash-light);
+  border-radius: var(--border-radius-lg);
+  margin: var(--spacing-md);
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  position: relative;
+}
+
+.progress-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--ion-card-border-color);
+  z-index: 0;
+}
+
+.progress-step.completed:not(:last-child)::after {
+  background: var(--car-wash-primary);
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-full);
+  background: var(--car-wash-white);
+  border: 2px solid var(--ion-card-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-semibold);
+  color: var(--ion-color-medium);
+  position: relative;
+  z-index: 1;
+  transition: all var(--transition-normal);
+}
+
+.progress-step.active .step-circle {
+  background: var(--car-wash-primary);
+  border-color: var(--car-wash-primary);
+  color: var(--car-wash-white);
+  box-shadow: var(--shadow-car-wash);
+}
+
+.progress-step.completed .step-circle {
+  background: var(--car-wash-accent);
+  border-color: var(--car-wash-accent);
+  color: var(--car-wash-white);
+}
+
+.step-label {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  text-align: center;
+  font-weight: var(--font-weight-medium);
+}
+
+.progress-step.active .step-label {
+  color: var(--car-wash-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.progress-step.completed .step-label {
+  color: var(--car-wash-accent);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .service-card, .booking-card, .vehicle-card {
+    margin: var(--spacing-sm);
+  }
+  
+  .booking-info {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .vehicle-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .progress-steps {
+    padding: var(--spacing-md);
+  }
+  
+  .step-circle {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .step-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-card, .booking-card, .vehicle-card {
+    margin: var(--spacing-xs);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .service-card-header, .booking-header {
+    padding: var(--spacing-md);
+  }
+  
+  .service-card-content, .booking-content, .vehicle-content {
+    padding: var(--spacing-md);
+  }
+  
+  .service-footer, .booking-actions {
+    padding: var(--spacing-md);
+  }
+  
+  .booking-actions {
+    flex-direction: column;
+  }
+  
+  .vehicle-actions {
+    flex-direction: column;
+  }
+}

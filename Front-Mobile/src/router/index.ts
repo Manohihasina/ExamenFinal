@@ -51,18 +51,12 @@ const routes: Array<RouteRecordRaw> = [
         path: 'repairs',
         component: () => import('@/views/repairs/RepairsPage.vue')
       },
-      {
-        path: 'repairs/add',
-        component: () => import('@/views/repairs/AddRepairPage.vue')
-      },
+
       {
         path: 'repairs/new',
         component: () => import('@/views/repairs/RepairsPage.vue')
       },
-      {
-        path: 'repairs/:id',
-        component: () => import('@/views/repairs/RepairDetailPage.vue')
-      },
+
       {
         path: 'payment',
         component: () => import('@/views/payment/PaymentPage.vue')

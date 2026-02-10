@@ -1,0 +1,488 @@
+/* Car Wash App - Global Styles */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ion App Base Styles */
+ion-app {
+  font-family: var(--font-family-primary);
+}
+
+/* Content Base Styles */
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+/* Header Styles */
+ion-header {
+  ion-toolbar {
+    --background: var(--ion-toolbar-background);
+    --border-color: var(--ion-toolbar-border-color);
+    --color: var(--ion-toolbar-text-color);
+    
+    ion-title {
+      font-weight: var(--font-weight-semibold);
+      font-size: 1.25rem;
+    }
+    
+    ion-back-button {
+      --color: var(--car-wash-primary);
+    }
+  }
+}
+
+/* Card Styles */
+ion-card {
+  --background: var(--ion-card-background);
+  --border-color: var(--ion-card-border-color);
+  margin: var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  
+  ion-card-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--ion-card-border-color);
+    
+    ion-card-title {
+      font-weight: var(--font-weight-semibold);
+      color: var(--car-wash-dark);
+      margin: 0;
+    }
+    
+    ion-card-subtitle {
+      color: var(--ion-color-medium);
+      margin-top: var(--spacing-xs);
+    }
+  }
+  
+  ion-card-content {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* List Styles */
+ion-list {
+  --background: var(--ion-list-background);
+  --border-color: var(--ion-list-border-color);
+  
+  ion-item {
+    --background: var(--ion-list-background);
+    --border-color: var(--ion-list-border-color);
+    --padding-start: var(--spacing-md);
+    --padding-end: var(--spacing-md);
+    --min-height: 60px;
+    
+    ion-label {
+      font-weight: var(--font-weight-normal);
+    }
+    
+    ion-icon {
+      color: var(--car-wash-primary);
+    }
+  }
+}
+
+/* Button Styles */
+ion-button {
+  --border-radius: var(--border-radius-md);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-normal);
+  
+  &.button-primary {
+    --background: var(--gradient-primary);
+    --box-shadow: var(--shadow-car-wash);
+    
+    &:hover {
+      transform: translateY(-2px);
+      --box-shadow: 0 12px 30px -5px rgba(220, 38, 38, 0.25);
+    }
+  }
+  
+  &.button-secondary {
+    --background: var(--gradient-secondary);
+    --color: var(--car-wash-dark);
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.button-outline {
+    --background: transparent;
+    --border-color: var(--car-wash-primary);
+    --color: var(--car-wash-primary);
+    --border-width: 2px;
+    
+    &:hover {
+      --background: var(--car-wash-primary);
+      --color: var(--car-wash-white);
+    }
+  }
+  
+  &.button-ghost {
+    --background: transparent;
+    --color: var(--car-wash-primary);
+    
+    &:hover {
+      --background: rgba(220, 38, 38, 0.1);
+    }
+  }
+}
+
+/* Input Styles */
+ion-input, ion-textarea {
+  --background: var(--car-wash-light);
+  --border-color: var(--ion-card-border-color);
+  --border-radius: var(--border-radius-md);
+  --padding-start: var(--spacing-md);
+  --padding-end: var(--spacing-md);
+  --padding-top: var(--spacing-md);
+  --padding-bottom: var(--spacing-md);
+  --color: var(--car-wash-dark);
+  --placeholder-color: var(--ion-color-medium);
+  transition: all var(--transition-normal);
+  
+  &:focus {
+    --border-color: var(--car-wash-primary);
+    --background: var(--car-wash-white);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+}
+
+/* Badge Styles */
+ion-badge {
+  --background: var(--car-wash-primary);
+  --color: var(--car-wash-white);
+  --border-radius: var(--border-radius-full);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
+  font-size: 0.75rem;
+  
+  &.badge-success {
+    --background: var(--car-wash-accent);
+  }
+  
+  &.badge-warning {
+    --background: var(--car-wash-warning);
+  }
+  
+  &.badge-danger {
+    --background: var(--car-wash-danger);
+  }
+  
+  &.badge-light {
+    --background: var(--car-wash-light);
+    --color: var(--car-wash-dark);
+  }
+}
+
+/* Chip Styles */
+ion-chip {
+  --background: var(--car-wash-light);
+  --color: var(--car-wash-dark);
+  --border-radius: var(--border-radius-full);
+  margin: var(--spacing-xs);
+  
+  ion-icon {
+    color: var(--car-wash-primary);
+  }
+}
+
+/* Tab Bar Styles */
+ion-tab-bar {
+  --background: var(--ion-tab-bar-background);
+  --border-color: var(--ion-toolbar-border-color);
+  
+  ion-tab-button {
+    --color: var(--ion-color-medium);
+    --color-selected: var(--car-wash-primary);
+    
+    ion-icon {
+      font-size: 1.5rem;
+    }
+    
+    ion-label {
+      font-weight: var(--font-weight-medium);
+      font-size: 0.75rem;
+    }
+    
+    &.tab-selected {
+      ion-icon, ion-label {
+        color: var(--car-wash-primary);
+      }
+    }
+  }
+}
+
+/* Modal Styles */
+ion-modal {
+  --background: rgba(0, 0, 0, 0.5);
+  
+  .ion-page {
+    background: var(--car-wash-white);
+    border-radius: var(--border-radius-2xl) var(--border-radius-2xl) 0 0;
+    overflow: hidden;
+  }
+}
+
+/* Alert Styles */
+ion-alert {
+  --background: var(--car-wash-white);
+  --header-color: var(--car-wash-dark);
+  --message-color: var(--ion-color-medium);
+  
+  .alert-button {
+    color: var(--car-wash-primary);
+  }
+}
+
+/* Loading Styles */
+ion-loading {
+  --background: var(--car-wash-white);
+  --spinner-color: var(--car-wash-primary);
+}
+
+/* Toast Styles */
+ion-toast {
+  --background: var(--car-wash-dark);
+  --color: var(--car-wash-white);
+  --border-radius: var(--border-radius-lg);
+}
+
+/* Progress Bar Styles */
+ion-progress-bar {
+  --background: var(--car-wash-light);
+  --progress-background: var(--gradient-primary);
+}
+
+/* Range Styles */
+ion-range {
+  --bar-background: var(--car-wash-light);
+  --bar-background-active: var(--car-wash-primary);
+  --knob-background: var(--car-wash-primary);
+  --knob-box-shadow: var(--shadow-md);
+}
+
+/* Toggle Styles */
+ion-toggle {
+  --track-background: var(--car-wash-light);
+  --track-background-checked: var(--car-wash-primary);
+  --handle-background: var(--car-wash-white);
+  --handle-background-checked: var(--car-wash-white);
+}
+
+/* Radio Styles */
+ion-radio {
+  --color: var(--car-wash-primary);
+  --color-checked: var(--car-wash-primary);
+}
+
+/* Checkbox Styles */
+ion-checkbox {
+  --background: var(--car-wash-white);
+  --border-color: var(--ion-card-border-color);
+  --border-color-checked: var(--car-wash-primary);
+  --checkmark-color: var(--car-wash-white);
+  --background-checked: var(--car-wash-primary);
+}
+
+/* Select Styles */
+ion-select {
+  --background: var(--car-wash-light);
+  --border-color: var(--ion-card-border-color);
+  --border-radius: var(--border-radius-md);
+  --padding-start: var(--spacing-md);
+  --padding-end: var(--spacing-md);
+  --padding-top: var(--spacing-md);
+  --padding-bottom: var(--spacing-md);
+  --color: var(--car-wash-dark);
+  --placeholder-color: var(--ion-color-medium);
+  
+  &:focus {
+    --border-color: var(--car-wash-primary);
+    --background: var(--car-wash-white);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+}
+
+/* Searchbar Styles */
+ion-searchbar {
+  --background: var(--car-wash-light);
+  --border-radius: var(--border-radius-lg);
+  --box-shadow: var(--shadow-sm);
+  --placeholder-color: var(--ion-color-medium);
+  --icon-color: var(--ion-color-medium);
+  --clear-button-color: var(--ion-color-medium);
+}
+
+/* Segment Styles */
+ion-segment {
+  --background: var(--car-wash-light);
+  --border-radius: var(--border-radius-md);
+  
+  ion-segment-button {
+    --color: var(--ion-color-medium);
+    --color-checked: var(--car-wash-white);
+    --background-checked: var(--car-wash-primary);
+    --border-radius: var(--border-radius-md);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+/* Refresher Styles */
+ion-refresher {
+  &.refresher-active {
+    ion-refresher-content {
+      color: var(--car-wash-primary);
+    }
+  }
+}
+
+/* Infinite Scroll Styles */
+ion-infinite-scroll {
+  --color: var(--car-wash-primary);
+}
+
+/* Reorder Styles */
+ion-reorder {
+  color: var(--ion-color-medium);
+}
+
+/* Fab Styles */
+ion-fab {
+  ion-fab-button {
+    --background: var(--gradient-primary);
+    --color: var(--car-wash-white);
+    --border-radius: var(--border-radius-full);
+    --box-shadow: var(--shadow-car-wash);
+    
+    &:hover {
+      transform: scale(1.05);
+      --box-shadow: 0 12px 30px -5px rgba(220, 38, 38, 0.25);
+    }
+  }
+}
+
+/* Grid System */
+ion-grid {
+  padding: var(--spacing-md);
+  
+  ion-col {
+    padding: var(--spacing-xs);
+  }
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-light { font-weight: var(--font-weight-light); }
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.text-primary { color: var(--car-wash-primary); }
+.text-secondary { color: var(--ion-color-medium); }
+.text-success { color: var(--car-wash-accent); }
+.text-warning { color: var(--car-wash-warning); }
+.text-danger { color: var(--car-wash-danger); }
+.text-dark { color: var(--car-wash-dark); }
+.text-light { color: var(--car-wash-light); }
+
+.bg-primary { background: var(--car-wash-primary); }
+.bg-secondary { background: var(--car-wash-secondary); }
+.bg-success { background: var(--car-wash-accent); }
+.bg-warning { background: var(--car-wash-warning); }
+.bg-danger { background: var(--car-wash-danger); }
+.bg-dark { background: var(--car-wash-dark); }
+.bg-light { background: var(--car-wash-light); }
+.bg-white { background: var(--car-wash-white); }
+
+.rounded-sm { border-radius: var(--border-radius-sm); }
+.rounded-md { border-radius: var(--border-radius-md); }
+.rounded-lg { border-radius: var(--border-radius-lg); }
+.rounded-xl { border-radius: var(--border-radius-xl); }
+.rounded-2xl { border-radius: var(--border-radius-2xl); }
+.rounded-full { border-radius: var(--border-radius-full); }
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+
+.m-0 { margin: 0; }
+.m-1 { margin: var(--spacing-xs); }
+.m-2 { margin: var(--spacing-sm); }
+.m-3 { margin: var(--spacing-md); }
+.m-4 { margin: var(--spacing-lg); }
+.m-5 { margin: var(--spacing-xl); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--spacing-xs); }
+.p-2 { padding: var(--spacing-sm); }
+.p-3 { padding: var(--spacing-md); }
+.p-4 { padding: var(--spacing-lg); }
+.p-5 { padding: var(--spacing-xl); }
+
+.hidden { display: none; }
+.block { display: block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+
+.justify-center { justify-content: center; }
+.justify-start { justify-content: flex-start; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  ion-card {
+    margin: var(--spacing-sm);
+  }
+  
+  ion-grid {
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  ion-card {
+    margin: var(--spacing-xs);
+    border-radius: var(--border-radius-md);
+  }
+  
+  ion-card-header, ion-card-content {
+    padding: var(--spacing-md);
+  }
+}

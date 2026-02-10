@@ -6,18 +6,13 @@
 </template>
 
 <script setup lang="ts">
-import { IonApp, IonRouterOutlet, IonFab, IonFabButton, IonFabList, IonIcon } from '@ionic/vue';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { onMounted, onUnmounted } from 'vue';
 // import { FCMService } from './services/fcm';
-import { 
-  notificationsOutline, 
-  playOutline, 
-  buildOutline, 
-  checkmarkOutline 
-} from 'ionicons/icons';
+
 
 // let fcmService: FCMService;
-const showTestMenu = ref(false);
+
 
 onMounted(async () => {
   try {
@@ -53,20 +48,4 @@ function handleCustomNotification(event: any) {
   // showToast(`${title}: ${body}`);
 }
 
-// Fonctions de test
-function toggleTestMenu() {
-  showTestMenu.value = !showTestMenu.value;
-}
-
-async function testFCMFlow() {
-  console.log('🧪 FCM désactivé - impossible de lancer le test');
-}
-
-async function testIntervention() {
-  console.log('🧪 FCM désactivé - impossible de tester la notification');
-}
-
-async function testRepair() {
-  console.log('🧪 FCM désactivé - impossible de tester la notification');
-}
 </script>

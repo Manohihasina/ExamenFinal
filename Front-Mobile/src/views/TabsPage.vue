@@ -35,28 +35,32 @@
 
 <script setup lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { homeOutline, carOutline, buildOutline, personOutline, notificationsOutline, cardOutline } from 'ionicons/icons';
+import { homeOutline, carOutline, buildOutline, personOutline, cardOutline } from 'ionicons/icons';
 </script>
 
 <style scoped>
+@import '@/theme/layout.css';
 .modern-tab-bar {
-  --background: linear-gradient(to top, #0f172a, #1e293b);
-  --border-top: 1px solid rgba(255, 255, 255, 0.1);
-  --backdrop-filter: blur(20px);
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
-  padding: 8px 0;
-  backdrop-filter: blur(20px);
+  --background: var(--car-wash-white);
+  --border-top: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 12px 0;
   display: flex;
   justify-content: space-evenly;
   gap: 2px;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  position: relative;
+  z-index: 100;
+  border-top: none;
 }
 
 .modern-tab-button {
-  --color: #94a3b8;
-  --color-selected: #ffffff;
+  --color: var(--ion-color-medium);
+  --color-selected: var(--car-wash-primary);
   --background: transparent;
   --background-selected: transparent;
-  --ripple-color: rgba(59, 130, 246, 0.2);
+  --ripple-color: rgba(220, 38, 38, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   margin: 0 2px;
@@ -75,11 +79,12 @@ import { homeOutline, carOutline, buildOutline, personOutline, notificationsOutl
   transform: translate(-50%, -50%);
   width: 0;
   height: 0;
-  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  background: var(--car-wash-primary);
   border-radius: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: -1;
-  opacity: 0.95;
+  opacity: 0;
+  filter: blur(8px);
 }
 
 .modern-tab-button.tab-selected::before {
@@ -88,7 +93,7 @@ import { homeOutline, carOutline, buildOutline, personOutline, notificationsOutl
 }
 
 .modern-tab-button.tab-selected {
-  --color: #ffffff;
+  --color: var(--car-wash-primary);
   transform: translateY(-2px);
 }
 
@@ -100,7 +105,7 @@ import { homeOutline, carOutline, buildOutline, personOutline, notificationsOutl
 
 .modern-tab-button.tab-selected .tab-icon {
   transform: scale(1.05);
-  filter: drop-shadow(0 2px 4px rgba(30, 64, 175, 0.4));
+  filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.4));
 }
 
 .tab-label {
@@ -194,7 +199,7 @@ import { homeOutline, carOutline, buildOutline, personOutline, notificationsOutl
 
 /* Effet de survol amélioré */
 .modern-tab-button:hover:not(.tab-selected) {
-  --color: #cbd5e1;
+  --color: var(--car-wash-primary);
   transform: translateY(-1px);
 }
 

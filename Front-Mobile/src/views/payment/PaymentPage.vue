@@ -48,21 +48,35 @@
                 <p>{{ slot.interventions.length }} intervention(s)</p>
                 <span class="repair-date">{{ formatDate(slot.createdAt) }}</span>
                 <div class="interventions-list">
-                  <div v-for="intervention in slot.interventions" :key="intervention.id" class="intervention-item">
-                    <span>• {{ intervention.name }}</span>
+                  <div 
+                    v-for="intervention in slot.interventions" 
+                    :key="intervention.id"
+                    class="intervention-item"
+                  >
+                    <span>{{ intervention.name }}</span>
                     <span>{{ intervention.price }}€</span>
                   </div>
                 </div>
               </div>
-              <div class="repair-amount">
+              <div class="payment-amount">
                 <span class="amount">{{ slot.totalPrice }}€</span>
-                <ion-badge color="warning">En attente</ion-badge>
+              </div>
+              <div class="select-indicator">
+                <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </div>
             </div>
           </div>
           
+          <!-- Instructions pour l'utilisateur -->
+          <div v-if="waitingSlots.length > 0 && !selectedWaitingSlot" class="selection-hint">
+            <div class="hint-content">
+              <ion-icon :icon="informationCircleOutline"></ion-icon>
+              <p>Cliquez sur une réparation ci-dessus pour choisir les options de paiement</p>
+            </div>
+          </div>
+
           <!-- Empty State -->
-          <div class="empty-state" v-else>
+          <div class="empty-state" v-else-if="waitingSlots.length === 0">
             <ion-icon :icon="cardOutline" size="large" color="medium" />
             <h4>Aucun paiement en attente</h4>
             <p>Toutes vos réparations ont été payées</p>
@@ -124,18 +138,7 @@ import {
   IonContent,
   IonButton,
   IonButtons,
-  IonIcon,
-  IonBadge,
-  toastController,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonRadio,
-  IonRadioGroup
+  toastController
 } from '@ionic/vue'
 import { 
   refreshOutline,
@@ -144,9 +147,11 @@ import {
   cashOutline,
   businessOutline,
   checkmarkCircleOutline,
-  cardOutline
+  cardOutline,
+  chevronForwardOutline,
+  informationCircleOutline
 } from 'ionicons/icons'
-import { getDatabase, ref as dbRef, get, onValue, remove, update, set } from 'firebase/database'
+import { getDatabase, ref as dbRef, onValue, remove, set } from 'firebase/database'
 import { getAuth } from 'firebase/auth'
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import CarLoadingSpinner from '@/components/CarLoadingSpinner.vue'
@@ -405,6 +410,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@import '@/theme/layout.css';
+@import '@/theme/components.css';
 .interventions-list {
   margin-top: 8px;
   padding: 8px;
@@ -441,11 +448,12 @@ onMounted(() => {
   margin: 0 0 16px 0;
   font-size: 1.2rem;
   font-weight: 600;
+  color: var(--car-wash-dark);
 }
 
 .summary-card {
   background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
-  color: white;
+  color: var(--car-wash-dark);
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -497,6 +505,7 @@ onMounted(() => {
   margin: 0 0 4px 0;
   font-size: 1rem;
   font-weight: 600;
+  color: var(--car-wash-dark);
 }
 
 .repair-info p {
@@ -531,7 +540,14 @@ onMounted(() => {
   margin: 0 0 20px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--car-wash-primary);
+}
+
+.pending-payments h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--car-wash-primary);
 }
 
 .payment-options {
@@ -599,7 +615,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--car-wash-dark);
   position: relative;
 }
 
@@ -739,14 +755,50 @@ onMounted(() => {
   font-size: 0.9rem;
 }
 
+.select-indicator {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--car-wash-primary);
+  font-size: 1.2rem;
+}
+
+.selection-hint {
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--car-wash-light);
+  border-radius: 12px;
+  border-left: 4px solid var(--car-wash-primary);
+}
+
+.hint-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hint-content ion-icon {
+  color: var(--car-wash-primary);
+  font-size: 1.2rem;
+}
+
+.hint-content p {
+  margin: 0;
+  color: var(--car-wash-dark);
+  font-size: 0.9rem;
+}
+
 /* Styles modernes */
 .modern-header {
   --background: linear-gradient(135deg, #167b7e, #1a5f7a);
   --color: #ffffff;
+  --border-bottom: none;
+  border-bottom: none;
 }
 
 .modern-title {
-  color: #ffffff;
+  color: var(--car-wash-primary);
   font-weight: 600;
 }
 

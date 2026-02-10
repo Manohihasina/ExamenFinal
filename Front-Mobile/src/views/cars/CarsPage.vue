@@ -14,7 +14,41 @@
     <ion-content :fullscreen="true" class="modern-content">
       <!-- Loading state -->
       <div v-if="loading" class="loading-container">
-        <CarLoadingSpinner message="Chargement de vos voitures..." />
+        <div class="loading-car">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="roadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#e0e0e0;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            
+            <!-- Road -->
+            <rect x="10" y="45" width="80" height="10" fill="url(#roadGradient)" rx="2" />
+            
+            <!-- Car body -->
+            <rect x="20" y="30" width="40" height="20" fill="#DC2626" rx="4" />
+            
+            <!-- Car roof -->
+            <path d="M 15 30 L 25 20 L 35 30 L 45 20 L 55 30" stroke="#DC2626" stroke-width="2" fill="none" />
+            
+            <!-- Car windows -->
+            <rect x="25" y="25" width="8" height="8" fill="#87CEEB" rx="1" />
+            <rect x="37" y="25" width="8" height="8" fill="#87CEEB" rx="1" />
+            
+            <!-- Car wheels -->
+            <circle cx="25" cy="50" r="4" fill="#333" />
+            <circle cx="45" cy="50" r="4" fill="#333" />
+            
+            <!-- Car lights -->
+            <circle cx="20" cy="35" r="2" fill="#FFD700" />
+            <circle cx="50" cy="35" r="2" fill="#FFD700" />
+          </svg>
+        </div>
+        <div class="loading-card">
+          <ion-spinner></ion-spinner>
+          <p>Chargement de vos voitures...</p>
+        </div>
       </div>
 
       <!-- Empty state -->
@@ -174,7 +208,6 @@ import {
 } from 'ionicons/icons'
 import { authService } from '@/services/auth.service'
 import { carService, type Car } from '@/services/car.service'
-import CarLoadingSpinner from '@/components/CarLoadingSpinner.vue'
 
 const loading = ref(true)
 const saving = ref(false)
@@ -404,14 +437,22 @@ const showToast = async (message: string, color: string = 'primary') => {
 }
 </script>
 <style scoped>
+@import '@/theme/layout.css';
+@import '@/theme/components.css';
 /* Header Modern */
 .modern-header {
   --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
   --border-color: transparent;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  min-height: 60px;
+  --border-bottom: none;
+  border-bottom: none;
 }
 
 .modern-title {
-  color: white;
+  color: var(--car-wash-primary);
   font-weight: 600;
   font-size: 1.3rem;
 }
@@ -428,6 +469,48 @@ const showToast = async (message: string, color: string = 'primary') => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+.loading-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: var(--car-wash-white);
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  z-index: -1;
+}
+
+.loading-car {
+  position: relative;
+  z-index: 1;
+  animation: carDrive 2s ease-in-out infinite;
+}
+
+.loading-car svg {
+  width: 60px;
+  height: 60px;
+  filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.3));
+}
+
+@keyframes carDrive {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(10px) rotate(-2deg);
+  }
+  50% {
+    transform: translateX(0) rotate(0deg);
+  }
+  75% {
+    transform: translateX(-10px) rotate(2deg);
+  }
 }
 
 .loading-card {
@@ -601,6 +684,11 @@ const showToast = async (message: string, color: string = 'primary') => {
 
 .form-container {
   padding: 24px;
+  background: var(--car-wash-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  margin: 20px;
+  border: 1px solid var(--ion-card-border-color);
 }
 
 .form-group {
@@ -611,38 +699,39 @@ const showToast = async (message: string, color: string = 'primary') => {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: rgb(17, 91, 93);
+  color: var(--car-wash-primary);
   font-size: 0.9rem;
 }
 
 .modern-input {
-  --background: rgb(17, 91, 93);
+  --background: var(--car-wash-white);
   --border-color: rgba(0, 0, 0, 0.1);
   --border-radius: 12px;
   --padding-start: 16px;
   --padding-end: 16px;
   --padding-top: 12px;
   --padding-bottom: 12px;
-  --highlight-color-focused: var(--ion-color-primary);
+  --highlight-color-focused: var(--car-wash-primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   transition: all 0.3s ease;
+  color: var(--car-wash-dark);
 }
 
 .modern-input:focus {
-  border-color: var(--ion-color-primary);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--car-wash-primary);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
 }
 
 .form-group.half {
-  margin-bottom: 0;
+  margin-bottom: 20px;
 }
 
 .form-actions {

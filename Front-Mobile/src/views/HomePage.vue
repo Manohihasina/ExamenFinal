@@ -2,7 +2,10 @@
   <ion-page>
     <ion-header :translucent="true" class="modern-header">
       <ion-toolbar>
-        <ion-title class="modern-title">Accueil</ion-title>
+        <div class="header-greeting">
+          <h2 class="greeting-text">Bonjour, {{ user?.displayName || 'Utilisateur' }} !</h2>
+          <p class="greeting-subtitle">Good Morning</p>
+        </div>
         <ion-buttons slot="end">
           <ion-button fill="clear" @click="router.push('/tabs/notifications')" class="notification-button">
             <ion-icon :icon="notificationsOutline"></ion-icon>
@@ -16,20 +19,19 @@
     </ion-header>
 
     <ion-content :fullscreen="true" class="modern-content">
-      <!-- Welcome Section -->
-      <div class="welcome-container">
+      <!-- Stats Grid -->
+            <div class="welcome-section">
         <div class="welcome-card">
-          <div class="welcome-avatar">
-            <ion-icon :icon="personCircleOutline"></ion-icon>
-          </div>
-          <div class="welcome-text">
-            <h1>Bonjour, {{ user?.displayName || 'Utilisateur' }} 👋</h1>
-            <p>Gérez votre garage en toute simplicité</p>
+          <div class="welcome-content">
+            <h3 class="welcome-title">Welcome!</h3>
+            <p class="welcome-subtitle">Let's schedule your projects</p>
+            <div class="welcome-illustration">
+              <ion-icon :icon="calendarOutline"></ion-icon>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Stats Grid -->
       <div class="stats-container">
         <div class="stats-grid">
           <div class="stat-card primary">
@@ -47,57 +49,40 @@
             </div>
             <div class="stat-content">
               <h2>{{ pendingRepairs.length }}</h2>
-              <p>Réparations en cours</p>
+              <p>Réparations en attente</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="actions-container">
-        <h3 class="section-title">Actions rapides</h3>
-        <div class="actions-grid">
-          <div class="action-card" @click="router.push('/tabs/cars')">
-            <div class="action-icon primary">
-              <ion-icon :icon="carOutline"></ion-icon>
-            </div>
-            <div class="action-content">
-              <h4>Ajouter une voiture</h4>
-              <p>Nouveau véhicule</p>
-            </div>
-            <div class="action-arrow">
-              <ion-icon :icon="chevronForwardOutline"></ion-icon>
-            </div>
-          </div>
-          <div class="action-card" @click="router.push('/tabs/repairs/new')">
-            <div class="action-icon secondary">
-              <ion-icon :icon="buildOutline"></ion-icon>
-            </div>
-            <div class="action-content">
-              <h4>Nouvelle réparation</h4>
-              <p>Demande de service</p>
-            </div>
-            <div class="action-arrow">
-              <ion-icon :icon="chevronForwardOutline"></ion-icon>
-            </div>
-          </div>
-          <div class="action-card" @click="router.push('/tabs/repairs')">
-            <div class="action-icon tertiary">
-              <ion-icon :icon="listOutline"></ion-icon>
-            </div>
-            <div class="action-content">
-              <h4>Mes réparations</h4>
-              <p>Historique complet</p>
-            </div>
-            <div class="action-arrow">
-              <ion-icon :icon="chevronForwardOutline"></ion-icon>
+        <!-- Welcome Section -->
+
+
+      <!-- Ongoing Projects Section -->
+      <div class="projects-section">
+        <div class="section-header">
+          <h3 class="section-title">Réparations terminées</h3>
+          <ion-button fill="clear" class="view-all-button" @click="router.push('/tabs/repairs')">
+            <span>view all</span>
+            <ion-icon :icon="chevronForwardOutline"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="projects-grid">
+          <div class="project-card" v-for="(project, index) in completedRepairs.slice(0, 4)" :key="index">
+            <div class="project-date">{{ formatDate(project.createdAt) }}</div>
+            <h4 class="project-title">{{ getCarName(project.carId) }}</h4>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" :style="{ width: getProgressPercentage(project.status) + '%' }"></div>
+              </div>
+              <span class="progress-text">{{ getProgressPercentage(project.status) }}%</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Recent Repairs -->
-      <div class="recent-container" v-if="recentRepairs.length > 0">
+      <div class="recent-container" v-if="recentRepairs.length > 0" style="margin-top: var(--spacing-xl);">
         <div class="section-header">
           <h3 class="section-title">Réparations récentes</h3>
           <ion-button fill="clear" size="small" @click="router.push('/tabs/repairs')">
@@ -154,7 +139,6 @@ import {
   IonPage, 
   IonHeader, 
   IonToolbar, 
-  IonTitle, 
   IonContent,
   IonButton,
   IonButtons,
@@ -163,14 +147,13 @@ import {
   toastController
 } from '@ionic/vue'
 import { 
-  carOutline, 
   buildOutline, 
-  listOutline,
-  personCircleOutline,
   chevronForwardOutline,
   refreshOutline,
   addOutline,
-  notificationsOutline
+  notificationsOutline,
+  calendarOutline,
+  carOutline
 } from 'ionicons/icons'
 import { authService } from '@/services/auth.service'
 import { carService, type Car } from '@/services/car.service'
@@ -203,6 +186,10 @@ const pendingRepairs = computed(() => {
 
 const recentRepairs = computed(() => {
   return repairs.value.slice(0, 3)
+})
+
+const completedRepairs = computed(() => {
+  return repairs.value.filter(repair => repair.status === RepairStatus.COMPLETED)
 })
 
 onMounted(async () => {
@@ -256,6 +243,15 @@ const getStatusText = (status: RepairStatus): string => {
   }
 }
 
+const getProgressPercentage = (status: RepairStatus): number => {
+  switch (status) {
+    case RepairStatus.PENDING: return 25
+    case RepairStatus.IN_PROGRESS: return 60
+    case RepairStatus.COMPLETED: return 100
+    default: return 0
+  }
+}
+
 const formatDate = (timestamp: any): string => {
   const date = timestamp.toDate()
   return date.toLocaleDateString('fr-FR', {
@@ -276,23 +272,44 @@ const showToast = async (message: string, color: string = 'primary') => {
 }
 </script>
 <style scoped>
-/* Header Modern */
+@import '@/theme/layout.css';
+@import '@/theme/components.css';
+
+/* Header Styles */
 .modern-header {
-  --background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
   --border-color: transparent;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  min-height: 60px;
 }
 
-.modern-title {
-  color: white;
-  font-weight: 600;
-  font-size: 1.3rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.header-greeting {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.greeting-text {
+  color: var(--car-wash-primary);
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(220, 38, 38, 0.1);
+}
+
+.greeting-subtitle {
+  color: rgba(220, 38, 38, 0.8);
+  font-size: 0.9rem;
+  margin: var(--spacing-xs) 0 0;
 }
 
 /* Notification Button */
 .notification-button {
   position: relative;
-  color: white;
+  color: var(--car-wash-primary);
 }
 
 .notification-button ion-badge {
@@ -307,96 +324,195 @@ const showToast = async (message: string, color: string = 'primary') => {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Content Modern */
-.modern-content {
-  --background: linear-gradient(to bottom, #f8fafc, #ffffff);
-  padding: 0;
+  background: var(--car-wash-primary);
+  color: var(--car-wash-white);
 }
 
 /* Welcome Section */
-.welcome-container {
-  padding: 24px 20px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  margin-bottom: 20px;
+.welcome-section {
+  padding: var(--spacing-lg);
+  background: var(--car-wash-white);
+  margin-bottom: var(--spacing-lg);
 }
 
 .welcome-card {
+  background: var(--gradient-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--ion-card-border-color);
+}
+
+.welcome-content {
+  text-align: center;
+}
+
+.welcome-title {
+  color: var(--car-wash-dark);
+  font-size: 1.8rem;
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.welcome-subtitle {
+  color: var(--ion-color-medium);
+  font-size: 1rem;
+  margin: 0 0 var(--spacing-xl) 0;
+  line-height: 1.5;
+}
+
+.welcome-illustration {
+  display: flex;
+  justify-content: center;
+  margin: var(--spacing-lg) 0;
+}
+
+.welcome-illustration ion-icon {
+  font-size: 4rem;
+  color: var(--car-wash-primary);
+  opacity: 0.8;
+}
+
+/* Projects Section */
+.projects-section {
+  padding: 0 var(--spacing-lg);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+  color: var(--car-wash-dark);
+  font-size: 1.3rem;
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.view-all-button {
+  --color: var(--car-wash-primary);
+  --background: transparent;
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
   display: flex;
   align-items: center;
-  gap: 16px;
-  color: white;
+  gap: var(--spacing-xs);
 }
 
-.welcome-avatar ion-icon {
-  font-size: 3.5rem;
-  opacity: 0.9;
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
 }
 
-.welcome-text h1 {
-  margin: 0 0 8px 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
+.project-card {
+  background: var(--car-wash-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--ion-card-border-color);
+  transition: all var(--transition-normal);
 }
 
-.welcome-text p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 1rem;
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.project-date {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.project-title {
+  color: var(--car-wash-dark);
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.project-progress {
+  margin-top: var(--spacing-md);
+}
+
+.progress-bar {
+  background: var(--car-wash-light);
+  height: 8px;
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.progress-fill {
+  background: var(--gradient-primary);
+  height: 100%;
+  transition: width var(--transition-normal);
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Stats Section */
 .stats-container {
-  padding: 0 20px;
-  margin-bottom: 24px;
+  padding: 0 var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .stat-card {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--car-wash-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--ion-card-border-color);
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .stat-card.primary {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  background: var(--gradient-primary);
+  color: var(--car-wash-white);
 }
 
 .stat-card.secondary {
-  background: linear-gradient(135deg, #10b981, #06b6d4);
-  color: white;
+  background: var(--gradient-secondary);
+  color: var(--car-wash-white);
+}
+
+.stat-icon {
+  margin-bottom: var(--spacing-sm);
 }
 
 .stat-icon ion-icon {
   font-size: 2.5rem;
-  margin-bottom: 12px;
   opacity: 0.9;
 }
 
 .stat-content h2 {
-  margin: 0 0 4px 0;
+  margin: 0 0 var(--spacing-xs) 0;
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1;
 }
 
@@ -404,7 +520,7 @@ const showToast = async (message: string, color: string = 'primary') => {
   margin: 0;
   font-size: 0.9rem;
   opacity: 0.9;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* Actions Section */
@@ -541,8 +657,8 @@ const showToast = async (message: string, color: string = 'primary') => {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  background: var(--car-wash-primary);
+  color: var(--car-wash-white);
   display: flex;
   align-items: center;
   justify-content: center;
