@@ -6,10 +6,11 @@ import Clients from './pages/Clients';
 import RepairsInProgress from './pages/RepairsInProgress';
 import RepairsGroupedView from './pages/RepairsGroupedView';
 import ApiTest from './pages/ApiTest';
-import DebugPage from './pages/DebugPage';
+
 import AddIntervention from './pages/AddIntervention';
 import SlotsPage from './pages/SlotsPage';
-import './App.css';
+import MobileAppPage from './pages/MobileAppPage';
+import './App-dark.css';
 
 function App() {
   return (
@@ -25,8 +26,8 @@ function App() {
               <Route path="/slots" element={<SlotsPage />} />
               <Route path="/repairs-grouped" element={<RepairsGroupedView />} />
               <Route path="/add-intervention" element={<AddIntervention />} />
+              <Route path="/mobile-app" element={<MobileAppPage />} />
               <Route path="/test" element={<ApiTest />} />
-              <Route path="/debug" element={<DebugPage />} />
             </Routes>
           </main>
         </div>

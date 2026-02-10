@@ -27,19 +27,6 @@ const RepairsInProgress = () => {
     fetchRepairs();
   }, []);
 
-  const handleCompleteRepair = async (repairId: number) => {
-    try {
-      console.log(`🔧 Repairs: Completing repair ${repairId}...`);
-      await apiService.completeRepair(repairId);
-      console.log(`✅ Repairs: Repair ${repairId} completed successfully`);
-      setRepairs(repairs.filter(repair => repair.id !== repairId));
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error('❌ Repairs: Error completing repair:', err);
-      alert(`Erreur lors de la finalisation de la réparation: ${errorMessage}`);
-    }
-  };
-
   const filteredRepairs = repairs.filter(repair => {
     try {
       return (

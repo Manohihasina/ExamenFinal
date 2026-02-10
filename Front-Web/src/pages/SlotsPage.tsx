@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Button,
   Container,
-  Heading,
   VStack,
-  HStack,
-  Text,
-  Badge,
+  Divider,
+  useToast,
+  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -16,36 +15,22 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Select,
-  Alert,
-  AlertIcon,
-  Spinner,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Progress,
-  Divider,
-  useToast,
-  FormControl,
-  FormLabel
 } from '@chakra-ui/react';
 import { repairSlotService, type RepairSlot, type CarWithRepairs } from '../services/repairSlotService';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase/config';
 import { useCallback } from 'react';
+import './SlotsPage-dark.css';
 
 // Définir le type Repair localement
-interface Repair {
-  id: string;
-  interventionName: string;
-  interventionPrice: number;
-  interventionId: number;
-  interventionDuration: number;
-  status: 'pending' | 'in_progress' | 'completed';
-}
+// interface Repair {
+//   id: string;
+//   interventionName: string;
+//   interventionPrice: number;
+//   interventionId: number;
+//   interventionDuration: number;
+//   status: 'pending' | 'in_progress' | 'completed';
+// }
 
 const SlotsPage: React.FC = () => {
   const [slots, setSlots] = useState<RepairSlot[]>([]);
@@ -221,6 +206,7 @@ const SlotsPage: React.FC = () => {
       setSelectedCar('');
       setSelectedSlot(null);
       fetchData(); // Recharger les données
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast({
         title: 'Erreur',
@@ -263,6 +249,7 @@ const SlotsPage: React.FC = () => {
       // Démarrer le suivi en temps réel
       startRepairTracking(repairId, duration);
       
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast({
         title: 'Erreur',
@@ -360,6 +347,7 @@ const SlotsPage: React.FC = () => {
       console.log('🔍 [DEBUG] Vérification réparations complétées pour:', completedRepairId);
       
       // Trouver la réparation terminée
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let completedRepair: any = null;
       let carId: string = '';
       
@@ -430,10 +418,28 @@ const SlotsPage: React.FC = () => {
       console.log('🔍 [DEBUG] Client ID récupéré depuis réparations:', clientId);
       console.log('🔍 [DEBUG] Nombre de réparations trouvées:', carRepairs.length);
       
+      // Récupérer les informations détaillées du client
+      let clientInfo = { name: 'Client inconnu', email: 'Email inconnu' };
+      try {
+        // Chercher dans les voitures avec réparations pour trouver les infos du client
+        const carWithClient = carsWithRepairs.find(car => car.id === carId);
+        if (carWithClient && carWithClient.client) {
+          clientInfo = {
+            name: carWithClient.client.name || 'Client inconnu',
+            email: carWithClient.client.email || 'Email inconnu'
+          };
+        }
+        console.log('🔍 [DEBUG] Infos client trouvées:', clientInfo);
+      } catch (error) {
+        console.log('🔍 [DEBUG] Erreur récupération infos client:', error);
+      }
+      
       // Créer l'objet pour waiting_slots
       const waitingSlotData = {
         carId,
         clientId,
+        clientName: clientInfo.name,
+        clientEmail: clientInfo.email,
         interventions: completedCar.interventions.map(intervention => ({
           id: intervention.id,
           name: intervention.interventionName,
@@ -523,19 +529,6 @@ const SlotsPage: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'green';
-      case 'occupied':
-        return 'blue';
-      case 'waiting_payment':
-        return 'orange';
-      default:
-        return 'gray';
-    }
-  };
-
   const getStatusText = (status: string) => {
     switch (status) {
       case 'available':
@@ -549,6 +542,13 @@ const SlotsPage: React.FC = () => {
     }
   };
 
+  // Fonction pour formater le temps en MM:SS
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   if (loading) {
     return (
       <Container maxW="container.xl" py={8}>
@@ -560,127 +560,106 @@ const SlotsPage: React.FC = () => {
   }
 
   return (
-    <Container maxW="container.xl" py={8}>
-      <Box bg="white" p={8} borderRadius="lg" boxShadow="md">
-        <Heading size="lg" mb={6} color="gray.800">
-          Slots de Réparation
-        </Heading>
+    <div className="slots-page-container">
+      <div className="slots-main-box">
+        <h1 className="slots-header">Slots de Réparation</h1>
         
         {/* Bouton de test pour vérifier les voitures complétées */}
-        <HStack mb={6}>
-          <Button 
-            colorScheme="blue" 
-            onClick={checkAllCarsInSlots}
-            leftIcon={<span>🔍</span>}
-          >
-            Vérifier les voitures complétées
-          </Button>
-          <Text fontSize="sm" color="gray.600" ml={3}>
+        <div className="slots-test-section">
+          <button className="slots-test-button" onClick={checkAllCarsInSlots}>
+            🔍 Vérifier les voitures complétées
+          </button>
+          <span className="slots-test-text">
             Test: Cliquez pour vérifier manuellement si des voitures ont toutes leurs réparations terminées
-          </Text>
-        </HStack>
+          </span>
+        </div>
 
-        <VStack spacing={6} align="stretch">
+        <div className="slots-grid">
           {slots.map((slot) => (
-            <Box
+            <div
               key={slot.id}
-              p={6}
-              border="2px"
-              borderColor={getStatusColor(slot.status) + '.200'}
-              borderRadius="md"
-              bg={getStatusColor(slot.status) + '.50'}
+              className={`slot-card ${slot.status}`}
             >
-              <HStack justify="space-between" align="start">
-                <VStack align="start" spacing={2}>
-                  <HStack>
-                    <Text fontSize="xl" fontWeight="bold">
-                      Slot #{slot.slot_number}
-                    </Text>
-                    <Badge colorScheme={getStatusColor(slot.status)}>
+              <div className="slot-header">
+                <div className="slot-info">
+                  <div className="slot-title">
+                    Slot #{slot.slot_number}
+                    <span className={`slot-status-badge ${slot.status}`}>
                       {getStatusText(slot.status)}
-                    </Badge>
-                  </HStack>
+                    </span>
+                  </div>
 
                   {slot.car && (
-                    <Box>
-                      <Text fontWeight="semibold">
-                        {slot.car.make || slot.car.brand} {slot.car.model}
-                      </Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Plaque: {slot.car.licensePlate || slot.car.license_plate}
-                      </Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Client: {slot.car.client?.name || 'Client inconnu'}
-                      </Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Couleur: {slot.car.color || 'Inconnue'}
-                      </Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Année: {slot.car.year || 'Inconnue'}
-                      </Text>
-                    </Box>
+                    <div className="car-info-section">
+                      <div className="car-info-title">Informations du véhicule</div>
+                      <span className="car-info-text">
+                        <strong>Marque/Modèle:</strong> {slot.car.brand} {slot.car.model}
+                      </span>
+                      <span className="car-info-text license-plate">
+                        <strong>Plaque:</strong> {slot.car.license_plate || slot.car.license_plate}
+                      </span>
+                      <span className="car-info-text">
+                        <strong>Client:</strong> {slot.car.client?.name || 'Client inconnu'}
+                      </span>
+                      <span className="car-info-text">
+                        <strong>Couleur:</strong> {slot.car.color || 'Inconnue'}
+                      </span>
+                      <span className="car-info-text">
+                        <strong>Année:</strong> {slot.car.year || 'Inconnue'}
+                      </span>
+                    </div>
                   )}
-                </VStack>
+                </div>
 
-                <VStack spacing={2}>
+                <div className="slot-actions">
                   {slot.status === 'available' && (
-                    <Button
-                      colorScheme="blue"
+                    <button
+                      className="slot-action-button"
                       onClick={() => {
                         setSelectedSlot(slot);
                         onOpen();
                       }}
                     >
                       Ajouter une voiture
-                    </Button>
+                    </button>
                   )}
 
                   {slot.status === 'occupied' && slotRepairs[slot.id] && slotRepairs[slot.id].length > 0 && (
-                    <Button
-                      colorScheme="green"
-                      size="sm"
-                      onClick={() => {
-                        // Les réparations sont déjà affichées ci-dessous
-                      }}
-                    >
+                    <button className="slot-action-button green small">
                       Voir les réparations ({slotRepairs[slot.id].length})
-                    </Button>
+                    </button>
                   )}
-                </VStack>
-              </HStack>
+                </div>
+              </div>
 
               {/* Afficher les réparations si elles existent */}
               {slot.status === 'occupied' && slotRepairs[slot.id] && slotRepairs[slot.id].length > 0 && (
-                <Box mt={4} p={4} bg="white" borderRadius="md" border="1px" borderColor="gray.200">
-                  <Text fontWeight="semibold" mb={2}>Réparations en cours:</Text>
-                  <Table size="sm">
-                    <Thead>
-                      <Tr>
-                        <Th>Intervention</Th>
-                        <Th>Prix</Th>
-                        <Th>Statut</Th>
-                        <Th>Action</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
+                <div className="repairs-section">
+                  <div className="repairs-title">Réparations en cours:</div>
+                  <table className="repairs-table">
+                    <thead>
+                      <tr>
+                        <th>Intervention</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {slotRepairs[slot.id].map((repair) => (
-                        <Tr key={repair.id}>
-                          <Td>{repair.interventionName}</Td>
-                          <Td>{repair.interventionPrice}€</Td>
-                          <Td>
-                            <Badge colorScheme={
-                              repair.status === 'pending' ? 'yellow' : 
-                              repair.status === 'in_progress' ? 'blue' : 'green'
-                            }>
+                        <tr key={repair.id}>
+                          <td>{repair.interventionName}</td>
+                          <td>{repair.interventionPrice}€</td>
+                          <td>
+                            <span className={`repair-status-badge ${repair.status}`}>
                               {repair.status === 'pending' ? 'En attente' : 
                                repair.status === 'in_progress' ? 'En cours' : 'Terminé'}
-                            </Badge>
-                          </Td>
-                          <Td>
+                            </span>
+                          </td>
+                          <td>
                             {repair.status === 'pending' && (
-                              <Button
-                                colorScheme="green"
-                                size="xs"
+                              <button
+                                className="repair-action-button"
                                 onClick={() => handleStartRepair(
                                   repair.id, 
                                   repair.interventionId, 
@@ -688,134 +667,147 @@ const SlotsPage: React.FC = () => {
                                 )}
                               >
                                 Réparer
-                              </Button>
+                              </button>
                             )}
                             
-                            {/* Barre de progression pour les réparations en cours */}
+                            {/* Minuteur pour les réparations en cours */}
                             {repair.status === 'in_progress' && repairProgress[repair.id] && (
-                              <Box w="200px">
-                                <Text fontSize="xs" mb={1}>
-                                  {repairProgress[repair.id].remaining}s restantes
-                                </Text>
-                                <Progress 
-                                  value={repairProgress[repair.id].progress} 
-                                  size="sm" 
-                                  colorScheme="blue"
-                                  hasStripe
-                                  isAnimated
-                                />
-                              </Box>
+                              <div className="timer-container">
+                                <div className="timer-display">
+                                  {formatTime(repairProgress[repair.id].remaining)}
+                                </div>
+                                <div className="timer-label">Temps restant</div>
+                              </div>
                             )}
                             
                             {/* Badge pour les réparations terminées */}
                             {repair.status === 'completed' && (
-                              <Badge colorScheme="green" variant="solid">
+                              <span className="completed-badge">
                                 ✅ Terminé
-                              </Badge>
+                              </span>
                             )}
-                          </Td>
-                        </Tr>
+                          </td>
+                        </tr>
                       ))}
-                    </Tbody>
-                  </Table>
-                </Box>
+                    </tbody>
+                  </table>
+                </div>
               )}
-            </Box>
+            </div>
           ))}
-        </VStack>
+        </div>
 
         {/* Section des voitures complétées */}
         {Object.keys(completedCars).length > 0 && (
-          <Box mt={8} p={6} bg="green.50" borderRadius="lg" borderWidth="1px" borderColor="green.200">
-            <Heading size="md" color="green.700" mb={4}>
+          <div className="completed-cars-section">
+            <h2 className="completed-cars-header">
               🎉 Voitures prêtes pour le paiement
-            </Heading>
+            </h2>
             
-            {Object.entries(completedCars).map(([carId, carData]) => (
-              <Box key={carId} p={4} bg="white" borderRadius="md" mb={4} shadow="sm">
-                <VStack align="start" spacing={3}>
-                  <HStack justify="space-between" w="100%">
-                    <Text fontWeight="bold" fontSize="lg">Voiture: {carId}</Text>
-                    <Badge colorScheme="green">{carData.interventions.length} interventions</Badge>
-                  </HStack>
-                  
-                  <VStack align="start" spacing={2} w="100%">
-                    <Text fontWeight="semibold">Interventions terminées:</Text>
-                    {carData.interventions.map((intervention: any) => (
-                      <HStack key={intervention.id} justify="space-between" w="100%" px={2}>
-                        <Text fontSize="sm">• {intervention.interventionName}</Text>
-                        <Text fontWeight="bold" color="green.600">{intervention.interventionPrice}€</Text>
-                      </HStack>
-                    ))}
-                  </VStack>
-                  
-                  <Divider />
-                  
-                  <HStack justify="space-between" w="100%">
-                    <Text fontSize="lg" fontWeight="bold">Total à payer:</Text>
-                    <Text fontSize="xl" fontWeight="bold" color="green.600">{carData.totalPrice}€</Text>
-                  </HStack>
-                  
-                  <Button
-                    colorScheme="green"
-                    size="lg"
-                    w="100%"
-                    onClick={() => moveToWaitingSlots(carId)}
-                    leftIcon={<span>🚗</span>}
-                  >
-                    Mettre en attente de paiement
-                  </Button>
-                </VStack>
-              </Box>
-            ))}
-          </Box>
+            {Object.entries(completedCars).map(([carId, carData]) => {
+              // Récupérer les informations du client pour cette voiture
+              const carWithClient = carsWithRepairs.find(car => car.id === carId);
+              const clientName = carWithClient?.client?.name || 'Client inconnu';
+              const clientEmail = carWithClient?.client?.email || 'Email inconnu';
+              
+              return (
+              <div key={carId} className="completed-car-card">
+                <div className="completed-car-header">
+                  <div className="completed-car-title">Voiture: {carId}</div>
+                  <span className="completed-car-badge">{carData.interventions.length} interventions</span>
+                </div>
+                
+                {/* Informations du client */}
+                <div className="client-info-section">
+                  <div className="client-info-title">Informations du client</div>
+                  <div className="client-info-grid">
+                    <div className="client-info-item">
+                      <span className="client-info-label">Nom:</span>
+                      <span className="client-info-value">{clientName}</span>
+                    </div>
+                    <div className="client-info-item">
+                      <span className="client-info-label">Email:</span>
+                      <span className="client-info-value">{clientEmail}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="interventions-list">
+                  <div className="interventions-title">Interventions terminées:</div>
+                  {carData.interventions.map((intervention: any) => (
+                    <div key={intervention.id} className="intervention-item">
+                      <span className="intervention-name">• {intervention.interventionName}</span>
+                      <span className="intervention-price">{intervention.interventionPrice}€</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <Divider />
+                
+                <div className="total-section">
+                  <span className="total-label">Total à payer:</span>
+                  <span className="total-amount">{carData.totalPrice}€</span>
+                </div>
+                
+                <button
+                  className="payment-button"
+                  onClick={() => moveToWaitingSlots(carId)}
+                >
+                  🚗 Mettre en attente de paiement
+                </button>
+              </div>
+              );
+            })}
+          </div>
         )}
 
         {/* Modal pour ajouter une voiture */}
         <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>
-              Ajouter une voiture au Slot #{selectedSlot?.slot_number}
+          <ModalOverlay className="modal-overlay" />
+          <ModalContent className="modal-content">
+            <ModalHeader className="modal-header">
+              <h2 className="modal-title">
+                Ajouter une voiture au Slot #{selectedSlot?.slot_number}
+              </h2>
+              <ModalCloseButton className="modal-close-button" />
             </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
+            <ModalBody className="modal-body">
               <VStack spacing={4}>
-                <Text>
+                <p className="modal-text">
                   Sélectionnez une voiture avec des réparations en attente:
-                </Text>
-                <Select
-                  placeholder="Choisir une voiture"
+                </p>
+                <select
+                  className="modal-select"
                   value={selectedCar}
                   onChange={(e) => setSelectedCar(e.target.value)}
                 >
+                  <option value="">Choisir une voiture</option>
                   {carsWithRepairs
                     .filter(car => car.repairs.length > 0)
                     .map((car) => (
                       <option key={car.id} value={car.id}>
-                        {car.make || car.brand} {car.model} ({car.license_plate}) - {car.client_name || (car.client?.name || 'Client inconnu')} - {car.repairs.length} réparations
+                        {car.brand} {car.model} ({car.license_plate}) - {car.client_name || (car.client?.name || 'Client inconnu')} - {car.repairs.length} réparations
                       </option>
                     ))}
-                </Select>
+                </select>
               </VStack>
             </ModalBody>
-            <ModalFooter>
-              <Button variant="outline" mr={3} onClick={onClose}>
+            <ModalFooter className="modal-footer">
+              <button className="modal-button cancel" onClick={onClose}>
                 Annuler
-              </Button>
-              <Button
-                colorScheme="blue"
+              </button>
+              <button
+                className="modal-button confirm"
                 onClick={handleAddCarToSlot}
-                isLoading={submitting}
-                isDisabled={!selectedCar}
+                disabled={!selectedCar}
               >
-                Ajouter au slot
-              </Button>
+                {submitting ? 'Ajout en cours...' : 'Ajouter au slot'}
+              </button>
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 

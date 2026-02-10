@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import apiService from '../services/api';
-import './RepairsGroupedView.css';
+import './RepairsGroupedView-dark.css';
 
 interface Repair {
   id: string;
@@ -18,10 +18,12 @@ interface Repair {
 
 interface CarWithRepairs {
   id: string;
-  make: string;
-  model: string;
-  year: number;
-  license_plate: string;
+  make?: string;
+  brand?: string;
+  model?: string;
+  year?: number;
+  license_plate?: string;
+  licensePlate?: string;
   client_id?: string;
   client?: {
     id: string;
@@ -47,8 +49,9 @@ const RepairsGroupedView = () => {
       console.log('🚗🔧 RepairsGrouped: Starting fetch...');
       try {
         const data = await apiService.getCarsWithGroupedRepairs();
-        console.log('🚗🔧 RepairsGrouped: Data received:', data);
-        setCarsData(data);
+        console.log('🚗🔧 RepairsGrouped: Raw data received:', data);
+        console.log('🚗🔧 RepairsGrouped: First car structure:', data[0]);
+        setCarsData(data as CarWithRepairs[]);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
         console.error('❌ RepairsGrouped: Error fetching cars with repairs:', err);
@@ -78,9 +81,9 @@ const RepairsGroupedView = () => {
     
     const searchLower = searchTerm.toLowerCase();
     return (
-      car.make?.toLowerCase().includes(searchLower) ||
+      (car.make?.toLowerCase().includes(searchLower) || car.brand?.toLowerCase().includes(searchLower)) ||
       car.model?.toLowerCase().includes(searchLower) ||
-      car.license_plate?.toLowerCase().includes(searchLower) ||
+      (car.license_plate?.toLowerCase().includes(searchLower) || car.licensePlate?.toLowerCase().includes(searchLower)) ||
       car.repairs.some(repair => 
         repair.interventionName?.toLowerCase().includes(searchLower) ||
         repair.status?.toLowerCase().includes(searchLower)
@@ -170,9 +173,9 @@ const RepairsGroupedView = () => {
             >
               <div className="car-info">
                 <h3>
-                  {car.make} {car.model} ({car.year})
+                  {car.make || car.brand || 'Marque inconnue'} {car.model || 'Modèle inconnue'} ({car.year || 'Année inconnue'})
                 </h3>
-                <p className="license-plate">Immatriculation: {car.license_plate}</p>
+                <p className="license-plate">Immatriculation: {car.license_plate || car.licensePlate || 'Plaque inconnue'}</p>
                 {car.client && (
                   <div className="client-info">
                     <p className="client-name">

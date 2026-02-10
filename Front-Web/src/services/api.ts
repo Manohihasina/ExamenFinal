@@ -61,19 +61,14 @@ export const apiService = {
           const repair = data[key];
           if (repair && typeof repair === 'object' && key !== 'slots') { // Exclure la clé 'slots'
             repairs.push({
-              id: key,
+              id: parseInt(key),
               car_id: repair.carId || '',
-              user_id: repair.userId || '',
               intervention_id: repair.interventionId || 0,
-              intervention_name: repair.interventionName || '',
-              intervention_price: typeof repair.interventionPrice === 'number' ? repair.interventionPrice : parseFloat(String(repair.interventionPrice || 0)),
-              intervention_duration: typeof repair.interventionDuration === 'number' ? repair.interventionDuration : parseInt(String(repair.interventionDuration || 0)),
               status: repair.status || 'pending',
               started_at: repair.startedAt || null,
               completed_at: repair.completedAt || null,
-              updated_at: repair.updatedAt || new Date().toISOString(),
-              completed_notified: repair.completedNotified || false,
-              halfway_notified: repair.halfwayNotified || false
+              created_at: repair.createdAt || new Date().toISOString(),
+              updated_at: repair.updatedAt || new Date().toISOString()
             });
           }
         });

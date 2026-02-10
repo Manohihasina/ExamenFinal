@@ -159,7 +159,7 @@ const AddIntervention: React.FC = () => {
                 precision={2}
                 step={5}
               >
-                <NumberInputField placeholder="0.00" size="lg" />
+                <NumberInputField placeholder="0.00" />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
                   <NumberDecrementStepper />
@@ -180,7 +180,7 @@ const AddIntervention: React.FC = () => {
                 min={60}
                 step={300} // 5 minutes
               >
-                <NumberInputField placeholder="3600" size="lg" />
+                <NumberInputField placeholder="3600" />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
                   <NumberDecrementStepper />
