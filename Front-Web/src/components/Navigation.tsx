@@ -22,6 +22,9 @@ const Navigation = () => {
             <Link to="/repairs-grouped" className="nav-link">Réparations Groupées</Link>
           </li>
           <li className="nav-item">
+            <Link to="/mobile-app" className="nav-link">Application Mobile</Link>
+          </li>
+          <li className="nav-item">
             <Link to="/test" className="nav-link">Test API</Link>
           </li>
         </ul>

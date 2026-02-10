@@ -92,6 +92,40 @@ class RepairSlotController extends Controller
         ]);
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'car_id' => 'nullable|string',
+            'status' => 'string|in:available,occupied,waiting_payment'
+        ]);
+
+        // Créer le slot directement dans Firebase
+        if (method_exists($this->firebaseService, 'createRepairSlot')) {
+            try {
+                $success = $this->firebaseService->createRepairSlot($validated);
+                if ($success) {
+                    return response()->json([
+                        'message' => 'Repair slot created successfully in Firebase',
+                        'data' => $validated
+                    ], 201);
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Firebase slot creation failed: ' . $e->getMessage());
+            }
+        }
+        
+        // Fallback vers la base de données si Firebase échoue
+        try {
+            $slot = $this->repairSlotRepository->create($validated);
+            return response()->json($slot, 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to create repair slot',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Libérer un slot directement dans Firebase
      */

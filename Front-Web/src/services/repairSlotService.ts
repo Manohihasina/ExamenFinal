@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ref, get, onValue, update, push, set } from 'firebase/database'
 import { database } from '../firebase/config'
 import { getAuth } from 'firebase/auth'
@@ -10,13 +11,17 @@ export interface RepairSlot {
   created_at: string
   updated_at: string
   car?: {
+    year: string
+    color: string
     id: number
     brand: string
     model: string
     license_plate: string
     client: {
+      id: number
       name: string
       email: string
+      phone: string
     }
     repairs?: Array<{
       id: number
@@ -27,6 +32,12 @@ export interface RepairSlot {
       status: string
     }>
   }
+}
+
+export interface RepairSlotUpdateData {
+  status: 'available' | 'occupied' | 'waiting_payment'
+  updatedAt: string
+  car_id?: number | null
 }
 
 export interface CarWithRepairs {
@@ -49,6 +60,7 @@ export interface CarWithRepairs {
 }
 
 export interface Repair {
+  userId: any
   id: string;
   carId: string;
   interventionId: string;
@@ -315,12 +327,12 @@ export class RepairSlotService {
     }
   }
 
-  async updateSlotStatus(slotId: number, status: string) {
+  async updateSlotStatus(slotId: number, status: 'available' | 'occupied' | 'waiting_payment') {
     try {
       console.log('🔍 [DEBUG] Mise à jour du slot:', slotId, 'nouveau statut:', status);
       const slotRef = ref(database, `repair_slots/${slotId}`); // Corrigé: repair_slots au lieu de slots
       
-      const updateData: any = {
+      const updateData: RepairSlotUpdateData = {
         status,
         updatedAt: new Date().toISOString()
       };

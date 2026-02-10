@@ -339,18 +339,39 @@ class FirebaseService
                 $carsData = [];
             }
 
-            // Get all users from Firebase Auth for client information
+            // Get only required users from Firebase Auth (optimization)
             $users = [];
+            $requiredUserIds = [];
+            
+            // First pass: collect all required user IDs
+            foreach ($repairsData as $repair) {
+                $userId = $repair['userId'] ?? null;
+                if ($userId && !in_array($userId, $requiredUserIds)) {
+                    $requiredUserIds[] = $userId;
+                }
+            }
+            
+            // Get only the users we need (much faster than listUsers(1000))
             try {
-                if ($this->auth) {
-                    $userRecords = $this->auth->listUsers(1000);
-                    foreach ($userRecords as $user) {
-                        $users[$user->uid] = [
-                            'id' => $user->uid,
-                            'name' => $user->displayName ?? $user->email ?? 'Utilisateur inconnu',
-                            'email' => $user->email ?? '',
-                            'phone' => $user->phoneNumber ?? null
-                        ];
+                if ($this->auth && !empty($requiredUserIds)) {
+                    foreach ($requiredUserIds as $userId) {
+                        try {
+                            $user = $this->auth->getUser($userId);
+                            $users[$userId] = [
+                                'id' => $user->uid,
+                                'name' => $user->displayName ?? $user->email ?? 'Utilisateur inconnu',
+                                'email' => $user->email ?? '',
+                                'phone' => $user->phoneNumber ?? null
+                            ];
+                        } catch (\Exception $e) {
+                            // User not found, create fallback
+                            $users[$userId] = [
+                                'id' => $userId,
+                                'name' => 'Client inconnu',
+                                'email' => '',
+                                'phone' => null
+                            ];
+                        }
                     }
                 }
             } catch (\Exception $e) {
@@ -421,10 +442,10 @@ class FirebaseService
                 
                 $result[] = [
                     'id' => $carId,
-                    'make' => $carInfo['make'] ?? 'Voiture inconnue',
+                    'make' => $carInfo['brand'] ?? $carInfo['make'] ?? 'Voiture inconnue',
                     'model' => $carInfo['model'] ?? 'Modèle inconnu',
                     'year' => $carInfo['year'] ?? 2020,
-                    'license_plate' => $carInfo['license_plate'] ?? 'Inconnue',
+                    'license_plate' => $carInfo['licensePlate'] ?? $carInfo['license_plate'] ?? 'Inconnue',
                     'client_id' => $userId,
                     'client' => $client,
                     'status' => $carInfo['status'] ?? 'active',
@@ -438,6 +459,217 @@ class FirebaseService
             return $result;
         } catch (\Exception $e) {
             Log::error('Firebase getCarsWithGroupedRepairs failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getClientRepairHistory(string $clientId): array
+    {
+        if (!$this->database) {
+            Log::error('Firebase Realtime Database not initialized - cannot get client repair history');
+            return [];
+        }
+
+        try {
+            // Get all repairs from Realtime Database
+            $repairsData = $this->getData('repairs');
+            if (!$repairsData) {
+                return [];
+            }
+
+            // Get all cars from Realtime Database
+            $carsData = $this->getData('cars');
+            if (!$carsData) {
+                $carsData = [];
+            }
+
+            // Get client information from Firebase Auth
+            $client = null;
+            try {
+                if ($this->auth) {
+                    $user = $this->auth->getUser($clientId);
+                    $client = [
+                        'id' => $user->uid,
+                        'name' => $user->displayName ?? $user->email ?? 'Utilisateur inconnu',
+                        'email' => $user->email ?? '',
+                        'phone' => $user->phoneNumber ?? null
+                    ];
+                }
+            } catch (\Exception $e) {
+                Log::warning('Could not fetch client from Firebase Auth: ' . $e->getMessage());
+                $client = [
+                    'id' => $clientId,
+                    'name' => 'Client inconnu',
+                    'email' => '',
+                    'phone' => null
+                ];
+            }
+
+            // Filter repairs for this specific client
+            $clientRepairs = [];
+            $carIds = [];
+            
+            foreach ($repairsData as $repairId => $repair) {
+                $userId = $repair['userId'] ?? null;
+                $carId = $repair['carId'] ?? null;
+                
+                if ($userId === $clientId && $carId) {
+                    $carIds[] = $carId;
+                    
+                    $clientRepairs[] = [
+                        'id' => $repairId,
+                        'interventionId' => $repair['interventionId'] ?? null,
+                        'interventionName' => $repair['interventionName'] ?? '',
+                        'interventionPrice' => $repair['interventionPrice'] ?? 0,
+                        'interventionDuration' => $repair['interventionDuration'] ?? 0,
+                        'status' => $repair['status'] ?? 'pending',
+                        'carId' => $carId,
+                        'completedNotified' => $repair['completedNotified'] ?? false,
+                        'halfwayNotified' => $repair['halfwayNotified'] ?? false,
+                        'startedAt' => $repair['startedAt'] ?? null,
+                        'completedAt' => $repair['completedAt'] ?? null,
+                        'created_at' => $repair['created_at'] ?? null,
+                        'updated_at' => $repair['updated_at'] ?? null
+                    ];
+                }
+            }
+
+            // Sort repairs by date (most recent first)
+            usort($clientRepairs, function($a, $b) {
+                $dateA = $a['startedAt'] ?? $a['created_at'] ?? 0;
+                $dateB = $b['startedAt'] ?? $b['created_at'] ?? 0;
+                return $dateB - $dateA; // Reverse order for most recent first
+            });
+
+            // Get car information for each repair
+            $uniqueCarIds = array_unique($carIds);
+            $cars = [];
+            
+            foreach ($uniqueCarIds as $carId) {
+                $carInfo = $carsData[$carId] ?? null;
+                $cars[$carId] = [
+                    'id' => $carId,
+                    'make' => $carInfo['brand'] ?? $carInfo['make'] ?? 'Voiture inconnue',
+                    'model' => $carInfo['model'] ?? 'Modèle inconnu',
+                    'year' => $carInfo['year'] ?? 2020,
+                    'license_plate' => $carInfo['licensePlate'] ?? $carInfo['license_plate'] ?? 'Inconnue'
+                ];
+            }
+
+            // Attach car information to repairs
+            foreach ($clientRepairs as &$repair) {
+                $carId = $repair['carId'];
+                $repair['car'] = $cars[$carId] ?? [
+                    'id' => $carId,
+                    'make' => 'Voiture inconnue',
+                    'model' => 'Modèle inconnu',
+                    'year' => 2020,
+                    'license_plate' => 'Inconnue'
+                ];
+            }
+
+            // Calculate statistics
+            $totalAmount = array_sum(array_column($clientRepairs, 'interventionPrice'));
+            $completedRepairs = count(array_filter($clientRepairs, fn($r) => $r['status'] === 'completed'));
+            $pendingRepairs = count(array_filter($clientRepairs, fn($r) => $r['status'] === 'pending'));
+            $inProgressRepairs = count(array_filter($clientRepairs, fn($r) => $r['status'] === 'in_progress'));
+
+            Log::info('getClientRepairHistory: Retrieved ' . count($clientRepairs) . ' repairs for client ' . $clientId);
+            
+            return [
+                'client' => $client,
+                'repairs' => $clientRepairs,
+                'statistics' => [
+                    'total_repairs' => count($clientRepairs),
+                    'total_amount' => $totalAmount,
+                    'completed_repairs' => $completedRepairs,
+                    'pending_repairs' => $pendingRepairs,
+                    'in_progress_repairs' => $inProgressRepairs
+                ]
+            ];
+        } catch (\Exception $e) {
+            Log::error('Firebase getClientRepairHistory failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function createRepairSlot(array $slotData): bool
+    {
+        if (!$this->database) {
+            Log::error('Firebase Realtime Database not initialized - cannot create repair slot');
+            return false;
+        }
+
+        try {
+            // Get current slots to determine the next slot number
+            $slotsData = $this->getData('repair_slots');
+            $nextSlotNumber = 1;
+            
+            if ($slotsData && is_array($slotsData)) {
+                $maxSlotNumber = 0;
+                foreach ($slotsData as $slot) {
+                    $slotNumber = $slot['slot_number'] ?? 0;
+                    if ($slotNumber > $maxSlotNumber) {
+                        $maxSlotNumber = $slotNumber;
+                    }
+                }
+                $nextSlotNumber = $maxSlotNumber + 1;
+            }
+
+            // Prepare the new slot data
+            $newSlot = [
+                'id' => $nextSlotNumber,
+                'slot_number' => $nextSlotNumber,
+                'car_id' => $slotData['car_id'] ?? null,
+                'status' => $slotData['status'] ?? 'available',
+                'created_at' => now()->toISOString(),
+                'updated_at' => now()->toISOString()
+            ];
+
+            // Create the new slot in Firebase
+            $result = $this->database->getReference('repair_slots/' . $nextSlotNumber)->set($newSlot);
+            
+            Log::info("Created new repair slot {$nextSlotNumber} with car_id: " . ($slotData['car_id'] ?? 'none'));
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Firebase createRepairSlot failed: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getRepairSlots(): array
+    {
+        if (!$this->database) {
+            Log::error('Firebase Realtime Database not initialized - cannot get repair slots');
+            return [];
+        }
+
+        try {
+            $slotsData = $this->getData('repair_slots');
+            if (!$slotsData) {
+                return [];
+            }
+
+            $slots = [];
+            foreach ($slotsData as $slotId => $slot) {
+                $slots[] = [
+                    'id' => $slot['id'] ?? $slotId,
+                    'slot_number' => $slot['slot_number'] ?? $slotId,
+                    'car_id' => $slot['car_id'] ?? null,
+                    'status' => $slot['status'] ?? 'available',
+                    'created_at' => $slot['created_at'] ?? null,
+                    'updated_at' => $slot['updated_at'] ?? null
+                ];
+            }
+
+            // Sort by slot number
+            usort($slots, function($a, $b) {
+                return $a['slot_number'] - $b['slot_number'];
+            });
+
+            return $slots;
+        } catch (\Exception $e) {
+            Log::error('Firebase getRepairSlots failed: ' . $e->getMessage());
             return [];
         }
     }

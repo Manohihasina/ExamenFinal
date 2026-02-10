@@ -394,14 +394,16 @@ const showToast = async (message: string, color: string = 'primary') => {
 </script>
 
 <style scoped>
+@import '@/theme/layout.css';
+@import '@/theme/components.css';
 /* Header Modern */
 .modern-header {
-  --background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
   --border-color: transparent;
 }
 
 .modern-title {
-  color: white;
+  color: var(--car-wash-primary);
   font-weight: 600;
   font-size: 1.3rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -415,7 +417,7 @@ const showToast = async (message: string, color: string = 'primary') => {
 
 /* Profile Container */
 .profile-container {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.8) 0%, rgba(185, 28, 28, 0.8) 100%);
   padding: 40px 20px 60px;
   margin-bottom: 30px;
   position: relative;
@@ -429,7 +431,7 @@ const showToast = async (message: string, color: string = 'primary') => {
   transform: translateX(-50%);
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
   border-radius: 50%;
 }
 
@@ -543,7 +545,7 @@ const showToast = async (message: string, color: string = 'primary') => {
 }
 
 .stat-card.primary::before {
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, #DC2626, #B91C1C);
 }
 
 .stat-card.secondary::before {
@@ -565,7 +567,7 @@ const showToast = async (message: string, color: string = 'primary') => {
 }
 
 .stat-card.primary .stat-icon {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #DC2626, #B91C1C);
   color: white;
 }
 
@@ -650,7 +652,7 @@ const showToast = async (message: string, color: string = 'primary') => {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #DC2626, #B91C1C);
   color: white;
   display: flex;
   align-items: center;

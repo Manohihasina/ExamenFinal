@@ -1,0 +1,23 @@
+{
+  "name": "garage-notifications",
+  "version": "1.0.0",
+  "description": "Firebase Cloud Functions pour les notifications du garage",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "firebase deploy --only functions",
+    "serve": "firebase emulators:start --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.0.0",
+    "firebase-functions": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.0",
+    "@types/node": "^18.0.0"
+  },
+  "engines": {
+    "node": "18"
+  }
+}

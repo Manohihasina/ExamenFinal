@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header :translucent="true" class="modern-header">
       <ion-toolbar>
-        <ion-title class="modern-title">Mes réparations</ion-title>
+        <ion-title class="modern-title">Réparations</ion-title>
         <ion-buttons slot="end">
           <ion-button fill="clear" @click="refreshData">
             <ion-icon :icon="refreshOutline"></ion-icon>
@@ -454,24 +454,9 @@ const viewRepair = (repair: RealtimeRepair) => {
   console.log('View repair:', repair.id)
 }
 
-const showPhoto = (photo: string) => {
-  window.open(photo, '_blank')
-}
-
 const getCarName = (carId: string): string => {
   const car = cars.value.find(c => c.id === carId)
   return car ? `${car.brand} ${car.model}` : 'Voiture inconnue'
-}
-
-const getStatusColor = (status: string): string => {
-  switch (status) {
-    case 'pending': return 'warning'
-    case 'in_progress': return 'primary'
-    case 'completed': return 'success'
-    case 'cancelled': return 'danger'
-    case 'halfway': return 'secondary'
-    default: return 'medium'
-  }
 }
 
 const getStatusText = (status: string): string => {
@@ -481,20 +466,29 @@ const getStatusText = (status: string): string => {
     case 'completed': return 'terminée'
     case 'cancelled': return 'annulée'
     case 'halfway': return 'mi-parcours'
-    default: return 'inconnue'
+    default: return status
   }
 }
+
 </script>
 
 <style scoped>
+@import '@/theme/layout.css';
+@import '@/theme/components.css';
 /* Header Modern */
 .modern-header {
   --background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   --border-color: transparent;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  min-height: 60px;
+  --border-bottom: none;
+  border-bottom: none;
 }
 
 .modern-title {
-  color: white;
+  color: var(--car-wash-primary);
   font-weight: 600;
   font-size: 1.3rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -509,9 +503,13 @@ const getStatusText = (status: string): string => {
 /* Filter Container */
 .filter-container {
   padding: 20px;
-  background: white;
+  background: var(--car-wash-white);
+  margin-top: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .modern-segment {
@@ -521,9 +519,9 @@ const getStatusText = (status: string): string => {
 
 .modern-segment ion-segment-button {
   --color: #64748b;
-  --color-checked: #3b82f6;
+  --color-checked: var(--car-wash-primary);
   --background: transparent;
-  --background-checked: rgba(59, 130, 246, 0.1);
+  --background-checked: var(--car-wash-primary);
   --border-radius: 8px;
   font-weight: 500;
 }
@@ -547,7 +545,7 @@ const getStatusText = (status: string): string => {
 
 .loading-card ion-spinner {
   margin-bottom: 20px;
-  color: #3b82f6;
+  color: var(--car-wash-primary);
 }
 
 .loading-card p {
@@ -636,8 +634,8 @@ const getStatusText = (status: string): string => {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  background: var(--car-wash-primary);
+  color: var(--car-wash-white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -753,6 +751,7 @@ const getStatusText = (status: string): string => {
 
 .form-group {
   margin-bottom: 20px;
+
 }
 
 .form-label {
@@ -764,18 +763,19 @@ const getStatusText = (status: string): string => {
 }
 
 .modern-input, .modern-select, .modern-textarea {
-  --background: rgb(116, 215, 232);
+  --background: var(--car-wash-white);
   --border-color: rgba(179, 76, 76, 0.1);
   --border-radius: 12px;
   --padding-start: 16px;
   --padding-end: 16px;
   --padding-top: 12px;
   --padding-bottom: 12px;
-  --highlight-color-focused: #3b82f6;
+  --highlight-color-focused: var(--car-wash-primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   transition: all 0.3s ease;
+  color : var(--car-wash-dark);
 }
 
 .modern-input:focus, .modern-select:focus, .modern-textarea:focus {
@@ -798,12 +798,12 @@ const getStatusText = (status: string): string => {
 }
 
 .form-actions ion-button[fill="solid"] {
-  --background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  --background: linear-gradient(135deg, var(--car-wash-primary));
 }
 
 .form-actions ion-button[fill="outline"] {
-  --border-color: #3b82f6;
-  --color: #3b82f6;
+  --border-color: var(--car-wash-primary);
+  --color: var(--car-wash-primary);
 }
 
 /* Photo Preview */
