@@ -17,6 +17,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { repairSlotService, type RepairSlot, type CarWithRepairs } from '../services/repairSlotService';
+import apiService from '../services/api';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase/config';
 import { useCallback } from 'react';
@@ -45,6 +46,57 @@ const SlotsPage: React.FC = () => {
   const [halfwayNotified, setHalfwayNotified] = useState<Record<string, boolean>>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+
+  // Fonction pour créer un nouveau slot
+  const createNewSlot = async () => {
+    try {
+      setSubmitting(true);
+      const result = await apiService.createRepairSlot({
+        status: 'available'
+      });
+      
+      toast({
+        title: 'Succès',
+        description: 'Nouveau slot de réparation créé avec succès',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      
+      console.log('Nouveau slot créé:', result);
+      
+      // Recharger les slots depuis Firebase
+      setTimeout(() => {
+        const slotsRef = ref(database, 'repair_slots');
+        onValue(slotsRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const slotsArray = Object.keys(data).map(key => ({
+              id: parseInt(key),
+              slot_number: data[key].slot_number || parseInt(key),
+              car_id: data[key].car_id || null,
+              status: data[key].status || 'available',
+              created_at: data[key].created_at,
+              updated_at: data[key].updated_at
+            }));
+            setSlots(slotsArray.sort((a, b) => a.slot_number - b.slot_number));
+          }
+        });
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Erreur lors de la création du slot:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de créer le nouveau slot',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Fonction pour vérifier toutes les voitures dans les slots
   const checkAllCarsInSlots = async () => {
@@ -571,6 +623,20 @@ const SlotsPage: React.FC = () => {
           </button>
           <span className="slots-test-text">
             Test: Cliquez pour vérifier manuellement si des voitures ont toutes leurs réparations terminées
+          </span>
+        </div>
+
+        {/* Bouton pour créer un nouveau slot */}
+        <div className="slots-create-section">
+          <button 
+            className="slots-create-button" 
+            onClick={createNewSlot}
+            disabled={submitting}
+          >
+            {submitting ? 'Création...' : '➕ Ajouter un nouveau slot'}
+          </button>
+          <span className="slots-create-text">
+            Crée un nouveau slot de réparation disponible dans Firebase
           </span>
         </div>
 

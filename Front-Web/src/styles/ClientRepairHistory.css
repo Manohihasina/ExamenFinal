@@ -1,0 +1,199 @@
+.client-repair-history {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.back-button {
+  background: #3182ce;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.back-button:hover {
+  background: #2c5282;
+}
+
+.page-header h2 {
+  margin: 0;
+  color: #2d3748;
+}
+
+.client-info-card, .stats-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.client-info-card h3, .stats-card h3 {
+  margin: 0 0 15px 0;
+  color: #2d3748;
+  font-size: 18px;
+}
+
+.client-details {
+  display: grid;
+  gap: 10px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 10px;
+}
+
+.label {
+  font-weight: 600;
+  color: #4a5568;
+  min-width: 80px;
+}
+
+.value {
+  color: #2d3748;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 15px;
+  background: #f7fafc;
+  border-radius: 6px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2d3748;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #718096;
+}
+
+.repairs-section h3 {
+  margin: 0 0 15px 0;
+  color: #2d3748;
+}
+
+.no-repairs {
+  text-align: center;
+  padding: 40px;
+  color: #718096;
+  font-style: italic;
+}
+
+.repairs-table-container {
+  overflow-x: auto;
+}
+
+.repairs-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.repairs-table th {
+  background: #4a5568;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.repairs-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.repairs-table tr:hover {
+  background: #f7fafc;
+}
+
+.intervention-name {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.car-info {
+  font-size: 14px;
+}
+
+.car-make-model {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.car-license {
+  color: #718096;
+  font-size: 12px;
+}
+
+.amount {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.status-in-progress {
+  background: #feebc8;
+  color: #c05621;
+}
+
+.status-completed {
+  background: #c6f6d5;
+  color: #276749;
+}
+
+.status-cancelled {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+}
+
+.error {
+  color: #e53e3e;
+}
+
+.loading {
+  color: #4a5568;
+}

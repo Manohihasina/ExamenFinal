@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getDatabase, ref, get } from 'firebase/database';
-import type { Client, FirebaseAuthUser, Car, Repair, Intervention, RepairSlot, WaitingSlot, DashboardStats, RepairWithDetails, CarWithClient } from '../types';
+import type { Client, FirebaseAuthUser, Car, Repair, Intervention, RepairSlot, WaitingSlot, DashboardStats, RepairWithDetails, CarWithClient, ClientRepairHistory } from '../types';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
@@ -455,6 +455,18 @@ export const apiService = {
     }
   },
 
+  async createRepairSlot(slotData: { car_id?: string; status?: string }): Promise<any> {
+    try {
+      console.log('🔧 Creating new repair slot...', slotData);
+      const response = await api.post<any>('/slots', slotData);
+      console.log('✅ Repair slot created successfully');
+      return response.data;
+    } catch (error) {
+      console.error('❌ Repair slot creation error:', error);
+      throw new Error('Erreur lors de la création de l\'emplacement de réparation');
+    }
+  },
+
   async getAvailableSlots(): Promise<RepairSlot[]> {
     try {
       const response = await api.get<RepairSlot[]>('/slots/available');
@@ -496,6 +508,19 @@ export const apiService = {
     } catch (error) {
       console.error('❌ Cars with grouped repairs fetch error:', error);
       throw new Error('Erreur lors du chargement des voitures avec leurs réparations');
+    }
+  },
+
+  // Client repair history
+  async getClientRepairHistory(clientId: string): Promise<ClientRepairHistory> {
+    try {
+      console.log(`🔧 Fetching repair history for client ${clientId}...`);
+      const response = await api.get<ClientRepairHistory>(`/clients/${clientId}/repair-history`);
+      console.log(`✅ Found repair history for client ${clientId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ Client ${clientId} repair history fetch error:`, error);
+      throw new Error('Erreur lors du chargement de l\'historique des réparations du client');
     }
   }
 };

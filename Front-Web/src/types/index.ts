@@ -103,3 +103,38 @@ export interface RepairWithDetails extends Repair {
   car: CarWithClient;
   intervention: Intervention;
 }
+
+export interface ClientRepairHistory {
+  client: FirebaseAuthUser;
+  repairs: ClientRepair[];
+  statistics: {
+    total_repairs: number;
+    total_amount: number;
+    completed_repairs: number;
+    pending_repairs: number;
+    in_progress_repairs: number;
+  };
+}
+
+export interface ClientRepair {
+  id: string;
+  interventionId: string | null;
+  interventionName: string;
+  interventionPrice: number;
+  interventionDuration: number;
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  carId: string;
+  completedNotified: boolean;
+  halfwayNotified: boolean;
+  startedAt: string | null;
+  completedAt: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  car: {
+    id: string;
+    make: string;
+    model: string;
+    year: number;
+    license_plate: string;
+  };
+}

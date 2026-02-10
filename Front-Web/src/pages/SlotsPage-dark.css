@@ -35,6 +35,49 @@
   margin-bottom: 32px;
 }
 
+.slots-create-section {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1px solid #10b981;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.slots-create-button {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-size: 16px;
+  min-width: 250px;
+}
+
+.slots-create-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.slots-create-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.slots-create-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  margin-top: 8px;
+  display: block;
+}
+
 .slots-test-button {
   background: var(--gradient-primary);
   color: var(--text-primary);

@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import apiService from '../services/api';
 import type { FirebaseAuthUser } from '../types';
 
 const Clients = () => {
+  const navigate = useNavigate();
   const [clients, setClients] = useState<FirebaseAuthUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const handleClientClick = (clientId: string) => {
+    navigate(`/clients/${clientId}/repair-history`);
+  };
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -82,7 +88,15 @@ const Clients = () => {
             {filteredClients.map((client) => (
               <tr key={client.uid}>
                 <td>{client.uid}</td>
-                <td className="client-name">{client.name}</td>
+                <td className="client-name">
+                  <button 
+                    onClick={() => handleClientClick(client.uid)}
+                    className="client-link"
+                    title="Voir l'historique des réparations"
+                  >
+                    {client.name}
+                  </button>
+                </td>
                 <td className="client-email">{client.email}</td>
                 <td>{client.phone || '-'}</td>
                 <td>{client.created_at ? new Date(client.created_at).toLocaleDateString('fr-FR') : '-'}</td>
@@ -97,6 +111,29 @@ const Clients = () => {
           </div>
         )}
       </div>
+
+      <style>{`
+        .client-link {
+          background: none;
+          border: none;
+          color: #3182ce;
+          text-decoration: underline;
+          cursor: pointer;
+          font-weight: 500;
+          padding: 0;
+          font-size: inherit;
+          font-family: inherit;
+        }
+
+        .client-link:hover {
+          color: #2c5282;
+          text-decoration: none;
+        }
+
+        .client-link:active {
+          color: #2a4e7c;
+        }
+      `}</style>
     </div>
   );
 };
